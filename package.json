@@ -2,8 +2,11 @@
   "name": "edgar-parser",
   "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
   "version": "0.0.1",
-  "repository": "git@github.com:joeychilson/edgar-parser.git",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/joeychilson/edgar-parser.git"
+  },
   "author": {
     "name": "Joey Chilson",
     "url": "https://joeychilson.com",
