@@ -28,7 +28,11 @@
   "types": "index.d.ts",
   "napi": {
     "name": "edgar-parser",
-    "triples": {}
+    "triples": {
+      "additional": [
+        "aarch64-apple-darwin"
+      ]
+    }
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.18.0",
