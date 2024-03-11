@@ -1,0 +1,32 @@
+{
+  "name": "edgar-parser-darwin-arm64",
+  "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
+  "version": "0.0.1",
+  "keywords": [
+    "edgar",
+    "filings",
+    "xbrl",
+    "xml",
+    "napi-rs",
+    "rust"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "edgar-parser.darwin-arm64.node",
+  "files": [
+    "edgar-parser.darwin-arm64.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": "git@github.com:joeychilson/edgar-parser.git"
+}
