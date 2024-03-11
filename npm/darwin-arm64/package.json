@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser-darwin-arm64",
   "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [
     "edgar",
     "filings",
