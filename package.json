@@ -1,0 +1,50 @@
+{
+  "name": "edgar-parser",
+  "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
+  "version": "0.0.0",
+  "repository": "git@github.com:joeychilson/edgar-parser.git",
+  "license": "MIT",
+  "author": {
+    "name": "Joey Chilson",
+    "url": "https://joeychilson.com",
+    "email": "joeychilson@outlook.com"
+  },
+  "bugs": {
+    "email": "joeychilson@outlook.com",
+    "url": "https://github.com/joeychilson/edgar-parser/issues"
+  },
+  "keywords": [
+    "edgar",
+    "filings",
+    "xbrl",
+    "xml",
+    "napi-rs",
+    "rust"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "napi": {
+    "name": "edgar-parser",
+    "triples": {}
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0",
+    "ava": "^6.0.1"
+  },
+  "ava": {
+    "timeout": "3m"
+  },
+  "engines": {
+    "node": ">= 10"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "ava",
+    "universal": "napi universal",
+    "version": "napi version"
+  },
+  "packageManager": "yarn@4.1.1"
+}

@@ -1,0 +1,35 @@
+{
+  "name": "edgar-parser-linux-x64-gnu",
+  "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
+  "version": "0.0.0",
+  "keywords": [
+    "edgar",
+    "filings",
+    "xbrl",
+    "xml",
+    "napi-rs",
+    "rust"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "edgar-parser.linux-x64-gnu.node",
+  "files": [
+    "edgar-parser.linux-x64-gnu.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "libc": [
+    "glibc"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": "git@github.com:joeychilson/edgar-parser.git"
+}
