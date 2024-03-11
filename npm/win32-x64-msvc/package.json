@@ -28,5 +28,8 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "repository": "git@github.com:joeychilson/edgar-parser.git"
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/joeychilson/edgar-parser.git"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "edgar-parser-linux-x64-gnu",
+  "name": "edgar-parser-linux-arm64-musl",
   "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
   "version": "0.0.2",
   "keywords": [
@@ -14,18 +14,18 @@
     "linux"
   ],
   "cpu": [
-    "x64"
+    "arm64"
   ],
-  "main": "edgar-parser.linux-x64-gnu.node",
+  "main": "edgar-parser.linux-arm64-musl.node",
   "files": [
-    "edgar-parser.linux-x64-gnu.node"
+    "edgar-parser.linux-arm64-musl.node"
   ],
   "license": "MIT",
   "engines": {
     "node": ">= 10"
   },
   "libc": [
-    "glibc"
+    "musl"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
