@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser-linux-arm64-gnu",
   "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "keywords": [
     "edgar",
     "filings",
