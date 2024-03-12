@@ -295,6 +295,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { parseXbrl } = nativeBinding
+const { parseForm13F, parseForm13FTable, parseXbrl } = nativeBinding
 
+module.exports.parseForm13F = parseForm13F
+module.exports.parseForm13FTable = parseForm13FTable
 module.exports.parseXbrl = parseXbrl

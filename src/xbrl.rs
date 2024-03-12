@@ -4,7 +4,7 @@ use roxmltree::{Document as XMLDoc, Node};
 use std::{collections::HashMap, rc::Rc};
 
 #[napi(object)]
-pub struct Document {
+pub struct XBRL {
   pub facts: Vec<Fact>,
 }
 
@@ -41,9 +41,8 @@ pub struct Period {
 }
 
 #[napi]
-pub fn parse_xbrl(env: Env, xbrl: String) -> Result<Document, Error> {
-  let doc = XMLDoc::parse(&xbrl)
-    .map_err(|err| Error::from_reason(format!("Failed to parse XBRL: {}", err)))?;
+pub fn parse_xbrl(env: Env, xbrl: String) -> Result<XBRL, Error> {
+  let doc = XMLDoc::parse(&xbrl).map_err(|e| Error::from_reason(e.to_string()))?;
   let root = doc.root_element();
 
   let xbrldi_ns = root
@@ -83,7 +82,7 @@ pub fn parse_xbrl(env: Env, xbrl: String) -> Result<Document, Error> {
 
   let facts = facts?;
 
-  Ok(Document { facts })
+  Ok(XBRL { facts })
 }
 
 fn parse_units(root: &Node) -> HashMap<String, String> {
