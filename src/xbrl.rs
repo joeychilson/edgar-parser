@@ -1,7 +1,7 @@
 use napi::{Env, Error, JsUnknown};
 use napi_derive::napi;
-use roxmltree::Document as XMLDoc;
-use std::collections::HashMap;
+use roxmltree::{Document as XMLDoc, Node};
+use std::{collections::HashMap, rc::Rc};
 
 #[napi(object)]
 pub struct Document {
@@ -10,7 +10,7 @@ pub struct Document {
 
 #[napi(object)]
 pub struct Fact {
-  pub context: Context,
+  pub context: Rc<Context>,
   pub concept: String,
   pub value: JsUnknown,
   pub decimals: Option<String>,
@@ -69,7 +69,7 @@ pub fn parse_xbrl(env: Env, xbrl: String) -> Result<Document, Error> {
             None
           };
           Ok(Fact {
-            context: context.clone(),
+            context: Rc::new(context.clone()),
             concept,
             value,
             decimals,
@@ -85,7 +85,7 @@ pub fn parse_xbrl(env: Env, xbrl: String) -> Result<Document, Error> {
   Ok(Document { facts })
 }
 
-fn parse_units(root: &roxmltree::Node) -> HashMap<String, String> {
+fn parse_units(root: &Node) -> HashMap<String, String> {
   let mut units = HashMap::new();
 
   for unit_node in root.children().filter(|node| node.has_tag_name("unit")) {
@@ -122,11 +122,11 @@ fn parse_units(root: &roxmltree::Node) -> HashMap<String, String> {
   units
 }
 
-fn parse_contexts(root: &roxmltree::Node, xbrldi_ns: &str) -> HashMap<String, Context> {
+fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
   let mut contexts = HashMap::new();
 
   for context_node in root.children().filter(|node| node.has_tag_name("context")) {
-    let context_id = context_node.attribute("id").unwrap().to_string();
+    let context_id = context_node.attribute("id").unwrap().to_owned();
 
     let entity_node = match context_node
       .children()
@@ -152,21 +152,14 @@ fn parse_contexts(root: &roxmltree::Node, xbrldi_ns: &str) -> HashMap<String, Co
         .filter(|node| node.has_tag_name((xbrldi_ns, "explicitMember")))
       {
         let raw_dimension = member_node.attribute("dimension").unwrap().to_string();
-        let dimension = raw_dimension
-          .split(":")
-          .collect::<Vec<&str>>()
-          .get(1)
-          .unwrap_or(&"")
-          .to_string();
+        let dimension = raw_dimension.split(':').nth(1).unwrap_or("");
         let raw_member = member_node.text().unwrap_or_default().to_string();
-        let member = raw_member
-          .split(":")
-          .collect::<Vec<&str>>()
-          .get(1)
-          .unwrap_or(&"")
-          .to_string();
+        let member = raw_member.split(':').nth(1).unwrap_or("");
 
-        segments.push(Segment { dimension, member });
+        segments.push(Segment {
+          dimension: dimension.to_string(),
+          member: member.to_string(),
+        });
       }
     }
 
@@ -197,8 +190,8 @@ fn parse_contexts(root: &roxmltree::Node, xbrldi_ns: &str) -> HashMap<String, Co
   contexts
 }
 
-fn parse_value(env: Env, value_str: &str) -> napi::Result<napi::JsUnknown> {
-  let str = value_str.trim().to_string();
+fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
+  let str = value_str.trim();
   if let Ok(value) = str.parse::<bool>() {
     env.get_boolean(value).map(|v| v.into_unknown())
   } else if let Ok(value) = str.parse::<i64>() {
@@ -206,15 +199,15 @@ fn parse_value(env: Env, value_str: &str) -> napi::Result<napi::JsUnknown> {
   } else if let Ok(value) = str.parse::<f64>() {
     env.create_double(value).map(|v| v.into_unknown())
   } else {
-    env.create_string(&str).map(|v| v.into_unknown())
+    env.create_string(str).map(|v| v.into_unknown())
   }
 }
 
-fn get_text_or_default(node: Option<roxmltree::Node>) -> String {
+fn get_text_or_default(node: Option<Node>) -> String {
   node.and_then(|n| n.text()).unwrap_or_default().to_string()
 }
 
-fn get_date(node: &roxmltree::Node, tag: &str) -> Option<String> {
+fn get_date(node: &Node, tag: &str) -> Option<String> {
   node
     .children()
     .find(|n| n.has_tag_name(tag))
