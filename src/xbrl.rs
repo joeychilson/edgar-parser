@@ -42,7 +42,8 @@ pub struct Period {
 
 #[napi]
 pub fn parse_xbrl(env: Env, xbrl: String) -> Result<Document, Error> {
-  let doc = XMLDoc::parse(&xbrl).map_err(|_| Error::from_reason("Failed to parse XBRL"))?;
+  let doc = XMLDoc::parse(&xbrl)
+    .map_err(|err| Error::from_reason(format!("Failed to parse XBRL: {}", err)))?;
   let root = doc.root_element();
 
   let xbrldi_ns = root
@@ -59,10 +60,10 @@ pub fn parse_xbrl(env: Env, xbrl: String) -> Result<Document, Error> {
     .filter_map(|node| {
       node.attribute("contextRef").and_then(|context_ref| {
         contexts.get(context_ref).map(|context| {
-          let concept = node.tag_name().name().to_string();
-          let value_str = node.text().unwrap_or_default().to_string();
+          let concept = node.tag_name().name().to_owned();
+          let value_str = node.text().unwrap_or_default().to_owned();
           let value = parse_value(env, &value_str)?;
-          let decimals = node.attribute("decimals").map(|s| s.to_string());
+          let decimals = node.attribute("decimals").map(|s| s.to_owned());
           let unit = if let Some(unit_ref) = node.attribute("unitRef") {
             units.get(unit_ref).cloned()
           } else {
@@ -128,63 +129,57 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
   for context_node in root.children().filter(|node| node.has_tag_name("context")) {
     let context_id = context_node.attribute("id").unwrap().to_owned();
 
-    let entity_node = match context_node
+    if let Some(entity_node) = context_node
       .children()
       .find(|node| node.has_tag_name("entity"))
     {
-      Some(node) => node,
-      None => continue,
-    };
-
-    let entity = entity_node
-      .children()
-      .find(|node| node.has_tag_name("identifier"))
-      .and_then(|node| node.text().map(str::to_string))
-      .unwrap_or_default();
-
-    let mut segments = vec![];
-    for segment_node in entity_node
-      .children()
-      .filter(|node| node.has_tag_name("segment"))
-    {
-      for member_node in segment_node
+      let entity = entity_node
         .children()
-        .filter(|node| node.has_tag_name((xbrldi_ns, "explicitMember")))
-      {
-        let raw_dimension = member_node.attribute("dimension").unwrap().to_string();
-        let dimension = raw_dimension.split(':').nth(1).unwrap_or("");
-        let raw_member = member_node.text().unwrap_or_default().to_string();
-        let member = raw_member.split(':').nth(1).unwrap_or("");
+        .find(|node| node.has_tag_name("identifier"))
+        .and_then(|node| node.text().map(str::to_owned))
+        .unwrap_or_default();
 
-        segments.push(Segment {
-          dimension: dimension.to_string(),
-          member: member.to_string(),
-        });
+      let mut segments = vec![];
+      for segment_node in entity_node
+        .children()
+        .filter(|node| node.has_tag_name("segment"))
+      {
+        for member_node in segment_node
+          .children()
+          .filter(|node| node.has_tag_name((xbrldi_ns, "explicitMember")))
+        {
+          let raw_dimension = member_node.attribute("dimension").unwrap().to_owned();
+          let dimension = raw_dimension.split(':').nth(1).unwrap_or("");
+          let raw_member = member_node.text().unwrap_or_default().to_owned();
+          let member = raw_member.split(':').nth(1).unwrap_or("");
+
+          segments.push(Segment {
+            dimension: dimension.to_owned(),
+            member: member.to_owned(),
+          });
+        }
+      }
+
+      if let Some(period_node) = context_node
+        .children()
+        .find(|node| node.has_tag_name("period"))
+      {
+        let period = Period {
+          instant: get_date(&period_node, "instant"),
+          start_date: get_date(&period_node, "startDate"),
+          end_date: get_date(&period_node, "endDate"),
+        };
+
+        contexts.insert(
+          context_id,
+          Context {
+            entity,
+            segments,
+            period,
+          },
+        );
       }
     }
-
-    let period_node = match context_node
-      .children()
-      .find(|node| node.has_tag_name("period"))
-    {
-      Some(node) => node,
-      None => continue,
-    };
-
-    let period = Period {
-      instant: get_date(&period_node, "instant"),
-      start_date: get_date(&period_node, "startDate"),
-      end_date: get_date(&period_node, "endDate"),
-    };
-
-    contexts.insert(
-      context_id,
-      Context {
-        entity,
-        segments,
-        period,
-      },
-    );
   }
 
   contexts
@@ -204,12 +199,12 @@ fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
 }
 
 fn get_text_or_default(node: Option<Node>) -> String {
-  node.and_then(|n| n.text()).unwrap_or_default().to_string()
+  node.and_then(|n| n.text()).unwrap_or_default().to_owned()
 }
 
 fn get_date(node: &Node, tag: &str) -> Option<String> {
   node
     .children()
     .find(|n| n.has_tag_name(tag))
-    .and_then(|n| n.text().map(str::to_string))
+    .and_then(|n| n.text().map(str::to_owned))
 }
