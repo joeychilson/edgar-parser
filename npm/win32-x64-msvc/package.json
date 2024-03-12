@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser-win32-x64-msvc",
   "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "keywords": [
     "edgar",
     "filings",
