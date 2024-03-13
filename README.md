@@ -6,8 +6,6 @@
 
 Based on testing on M2 Macbook, `edgar-parser` can parse a large XBRL filing in under 100ms from local disk. This is about 4-5x faster than the same code running in Python using PyO3.
 
-Based on testing on Fly.io using Hono, downloading and parsing a large XBRL filing and serving the JSON response takes about ~300ms after warmup.
-
 ## Features
 
 - Fast parsing of EDGAR XBRL and XML filings.

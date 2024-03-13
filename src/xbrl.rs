@@ -50,8 +50,7 @@ pub fn parse_xbrl(env: Env, xbrl: String) -> Result<XBRL, Error> {
   let xbrldi_ns = root
     .namespaces()
     .find(|ns| ns.name() == Some("xbrldi"))
-    .map(|ns| ns.uri())
-    .unwrap_or_default();
+    .map_or_else(String::new, |ns| ns.uri().to_owned());
 
   let units = parse_units(&root);
   let contexts = parse_contexts(&root, &xbrldi_ns);
