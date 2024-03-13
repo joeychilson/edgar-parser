@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser-android-arm64",
   "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "keywords": [
     "edgar",
     "filings",
