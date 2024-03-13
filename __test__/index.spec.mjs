@@ -2,14 +2,39 @@ import test from 'ava'
 import fs from 'fs'
 import { parseForm13F, parseForm13FTable, parseOwnershipForm, parseXbrl } from '../index.js'
 
-test('parse xbrl-k from native', async (t) => {
+test('parse 8k from native', async (t) => {
   const startTime = Date.now()
 
-  const file = fs.readFileSync('./__test__/data/xbrl-k.xml', 'utf8')
+  const file = fs.readFileSync('./__test__/data/8k.xml', 'utf8')
   const result = parseXbrl(file)
 
   const endTime = Date.now()
-  console.log('Parsed XBRL-K:', endTime - startTime, 'ms')
+  console.log('Parsed 8K:', endTime - startTime, 'ms')
+
+  t.is(result.facts.length, 29)
+
+  const firstFact = result.facts[0]
+  t.is(firstFact.concept, 'EntityCentralIndexKey')
+  t.is(firstFact.value, 789019)
+
+  const context = firstFact.context
+  t.is(context.entity, '0000789019')
+  t.deepEqual(context.segments, [])
+
+  const period = context.period
+  t.is(period.instant, undefined)
+  t.is(period.start_date, undefined)
+  t.is(period.end_date, undefined)
+})
+
+test('parse 10k from native', async (t) => {
+  const startTime = Date.now()
+
+  const file = fs.readFileSync('./__test__/data/10k.xml', 'utf8')
+  const result = parseXbrl(file)
+
+  const endTime = Date.now()
+  console.log('Parsed 10K:', endTime - startTime, 'ms')
 
   t.is(result.facts.length, 3460)
 
@@ -27,14 +52,14 @@ test('parse xbrl-k from native', async (t) => {
   t.is(period.end_date, undefined)
 })
 
-test('parse xbrl-q from native', async (t) => {
+test('parse 10q from native', async (t) => {
   const startTime = Date.now()
 
-  const file = fs.readFileSync('./__test__/data/xbrl-q.xml', 'utf8')
+  const file = fs.readFileSync('./__test__/data/10q.xml', 'utf8')
   const result = parseXbrl(file)
 
   const endTime = Date.now()
-  console.log('Parsed XBRL-Q:', endTime - startTime, 'ms')
+  console.log('Parsed 10Q:', endTime - startTime, 'ms')
 
   t.is(result.facts.length, 1578)
 

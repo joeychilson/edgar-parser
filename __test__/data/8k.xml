@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xbrl
+  xmlns="http://www.xbrl.org/2003/instance"
+  xmlns:dei="http://xbrl.sec.gov/dei/2023"
+  xmlns:link="http://www.xbrl.org/2003/linkbase"
+  xmlns:msft="http://www.microsoft.com/20240117"
+  xmlns:us-gaap="http://fasb.org/us-gaap/2023"
+  xmlns:xbrldi="http://xbrl.org/2006/xbrldi"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+    <link:schemaRef xlink:href="msft-20240117.xsd" xlink:type="simple"/>
+    <context id="duration_2024-01-17_to_2024-01-17">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000789019</identifier>
+        </entity>
+        <period>
+            <startDate>2024-01-17</startDate>
+            <endDate>2024-01-17</endDate>
+        </period>
+    </context>
+    <context id="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointOneTwoFivePercentDueDecemberSixTwentyTwentyOneMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000789019</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementClassOfStockAxis">msft:NotesTwoPointOneTwoFivePercentDueDecemberSixTwentyTwentyOneMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-17</startDate>
+            <endDate>2024-01-17</endDate>
+        </period>
+    </context>
+    <context id="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesThreePointOneTwoFivePercentDueDecemberSixTwentyTwentyEightMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000789019</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementClassOfStockAxis">msft:NotesThreePointOneTwoFivePercentDueDecemberSixTwentyTwentyEightMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-17</startDate>
+            <endDate>2024-01-17</endDate>
+        </period>
+    </context>
+    <context id="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointSixTwoFivePercentDueMayTwoTwentyThirtyThreeMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000789019</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementClassOfStockAxis">msft:NotesTwoPointSixTwoFivePercentDueMayTwoTwentyThirtyThreeMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-17</startDate>
+            <endDate>2024-01-17</endDate>
+        </period>
+    </context>
+    <dei:EntityCentralIndexKey
+      contextRef="duration_2024-01-17_to_2024-01-17"
+      id="Hidden_dei_EntityCentralIndexKey_duration_2024-01-17_to_2024-01-17">0000789019</dei:EntityCentralIndexKey>
+    <dei:DocumentType contextRef="duration_2024-01-17_to_2024-01-17" id="Fact_1">8-K/A</dei:DocumentType>
+    <dei:AmendmentFlag contextRef="duration_2024-01-17_to_2024-01-17" id="Fact_3">true</dei:AmendmentFlag>
+    <dei:DocumentPeriodEndDate contextRef="duration_2024-01-17_to_2024-01-17" id="Fact_0">2024-01-17</dei:DocumentPeriodEndDate>
+    <dei:EntityRegistrantName contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-326">Microsoft Corporation</dei:EntityRegistrantName>
+    <dei:EntityIncorporationStateCountryCode contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-327">WA</dei:EntityIncorporationStateCountryCode>
+    <dei:EntityFileNumber contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-328">001-37845</dei:EntityFileNumber>
+    <dei:EntityTaxIdentificationNumber contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-329">91-1144442</dei:EntityTaxIdentificationNumber>
+    <dei:EntityAddressAddressLine1 contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-330">One Microsoft Way</dei:EntityAddressAddressLine1>
+    <dei:EntityAddressCityOrTown contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-331">Redmond</dei:EntityAddressCityOrTown>
+    <dei:EntityAddressStateOrProvince contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-332">WA</dei:EntityAddressStateOrProvince>
+    <dei:EntityAddressPostalZipCode contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-333">98052-6399</dei:EntityAddressPostalZipCode>
+    <dei:CityAreaCode contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-334">425</dei:CityAreaCode>
+    <dei:LocalPhoneNumber contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-335">882-8080</dei:LocalPhoneNumber>
+    <dei:WrittenCommunications contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-336">false</dei:WrittenCommunications>
+    <dei:SolicitingMaterial contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-337">false</dei:SolicitingMaterial>
+    <dei:PreCommencementTenderOffer contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-338">false</dei:PreCommencementTenderOffer>
+    <dei:PreCommencementIssuerTenderOffer contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-339">false</dei:PreCommencementIssuerTenderOffer>
+    <dei:Security12bTitle
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointOneTwoFivePercentDueDecemberSixTwentyTwentyOneMember"
+      id="ixv-340">Common stock, $0.00000625 par value per share</dei:Security12bTitle>
+    <dei:TradingSymbol
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointOneTwoFivePercentDueDecemberSixTwentyTwentyOneMember"
+      id="ixv-341">MSFT</dei:TradingSymbol>
+    <dei:SecurityExchangeName
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointOneTwoFivePercentDueDecemberSixTwentyTwentyOneMember"
+      id="ixv-342">NASDAQ</dei:SecurityExchangeName>
+    <dei:Security12bTitle
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesThreePointOneTwoFivePercentDueDecemberSixTwentyTwentyEightMember"
+      id="ixv-343">3.125% Notes due 2028</dei:Security12bTitle>
+    <dei:TradingSymbol
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesThreePointOneTwoFivePercentDueDecemberSixTwentyTwentyEightMember"
+      id="ixv-344">MSFT</dei:TradingSymbol>
+    <dei:SecurityExchangeName
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesThreePointOneTwoFivePercentDueDecemberSixTwentyTwentyEightMember"
+      id="ixv-345">NASDAQ</dei:SecurityExchangeName>
+    <dei:Security12bTitle
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointSixTwoFivePercentDueMayTwoTwentyThirtyThreeMember"
+      id="ixv-346">2.625% Notes due 2033</dei:Security12bTitle>
+    <dei:TradingSymbol
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointSixTwoFivePercentDueMayTwoTwentyThirtyThreeMember"
+      id="ixv-347">MSFT</dei:TradingSymbol>
+    <dei:SecurityExchangeName
+      contextRef="duration_2024-01-17_to_2024-01-17_us-gaap-StatementClassOfStockAxis_msft-NotesTwoPointSixTwoFivePercentDueMayTwoTwentyThirtyThreeMember"
+      id="ixv-348">NASDAQ</dei:SecurityExchangeName>
+    <dei:EntityEmergingGrowthCompany contextRef="duration_2024-01-17_to_2024-01-17" id="ixv-349">false</dei:EntityEmergingGrowthCompany>
+    <dei:AmendmentDescription contextRef="duration_2024-01-17_to_2024-01-17" id="Fact_2">Microsoft Corporation (the &#x201c;Company,&#x201d; &#x201c;we,&#x201d; or &#x201c;our&#x201d;) is filing this Form 8-K/A as an amendment to the Current Report on Form 8-K filed by the Company with the U.S. Securities and Exchange Commission (the &#x201c;SEC&#x201d;) on January&#160;19, 2024 (the &#x201c;Original Filing&#x201d;).&#160;</dei:AmendmentDescription>
+</xbrl>
