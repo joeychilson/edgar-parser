@@ -9,16 +9,16 @@ test('parse xbrl-k from native', async (t) => {
   const result = parseXbrl(file)
 
   const endTime = Date.now()
-  console.log('Parsed XBRL:', endTime - startTime, 'ms')
+  console.log('Parsed XBRL-K:', endTime - startTime, 'ms')
 
-  t.is(result.facts.length, 1839)
+  t.is(result.facts.length, 3460)
 
   const firstFact = result.facts[0]
-  t.is(firstFact.concept, 'EntityCentralIndexKey')
-  t.is(firstFact.value, 789019)
+  t.is(firstFact.concept, 'DocumentFiscalPeriodFocus')
+  t.is(firstFact.value, 'FY')
 
   const context = firstFact.context
-  t.is(context.entity, '0000789019')
+  t.is(context.entity, '0001067983')
   t.deepEqual(context.segments, [])
 
   const period = context.period
@@ -34,7 +34,7 @@ test('parse xbrl-q from native', async (t) => {
   const result = parseXbrl(file)
 
   const endTime = Date.now()
-  console.log('Parsed XBRL:', endTime - startTime, 'ms')
+  console.log('Parsed XBRL-Q:', endTime - startTime, 'ms')
 
   t.is(result.facts.length, 1578)
 
