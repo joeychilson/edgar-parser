@@ -1,6 +1,6 @@
 {
   "name": "edgar-parser-linux-x64-gnu",
-  "description": "A fast Rust based parser for EDGAR XBRL and XML filings.",
+  "description": "A linux-x64-gnu binary for edgar-parser",
   "version": "0.0.6",
   "keywords": [
     "edgar",
