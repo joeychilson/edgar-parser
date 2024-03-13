@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser",
   "description": "A high-performance Rust-based library for parsing XBRL and XML filings from EDGAR.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "repository": {
     "type": "git",
