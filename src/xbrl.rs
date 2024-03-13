@@ -22,16 +22,16 @@ pub struct Fact {
 #[napi(object)]
 #[derive(Clone)]
 pub struct Context {
-  pub entity: String,
+  pub entity: Rc<String>,
   pub segments: Vec<Segment>,
-  pub period: Period,
+  pub period: Rc<Period>,
 }
 
 #[napi(object)]
 #[derive(Clone)]
 pub struct Segment {
-  pub dimension: String,
-  pub member: String,
+  pub dimension: Rc<String>,
+  pub member: Rc<String>,
 }
 
 #[napi(object)]
@@ -91,7 +91,7 @@ fn parse_units(root: &Node) -> HashMap<String, String> {
   let mut units = HashMap::new();
 
   for unit_node in root.children().filter(|node| node.has_tag_name("unit")) {
-    let unit_id = unit_node.attribute("id").unwrap_or_default().to_owned();
+    let unit_id = unit_node.attribute("id").unwrap_or("").to_owned();
 
     let measure = if let Some(divide_node) = unit_node
       .children()
@@ -116,6 +116,7 @@ fn parse_units(root: &Node) -> HashMap<String, String> {
           .children()
           .find(|node| node.has_tag_name("measure")),
       )
+      .to_owned()
     };
 
     units.insert(unit_id, measure);
@@ -137,8 +138,8 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
       let entity = entity_node
         .children()
         .find(|node| node.has_tag_name("identifier"))
-        .and_then(|node| node.text().map(str::to_owned))
-        .unwrap_or_default();
+        .and_then(|node| node.text())
+        .unwrap_or("");
 
       let mut segments = vec![];
       for segment_node in entity_node
@@ -149,14 +150,15 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
           .children()
           .filter(|node| node.has_tag_name((xbrldi_ns, "explicitMember")))
         {
-          let raw_dimension = member_node.attribute("dimension").unwrap().to_owned();
-          let dimension = raw_dimension.split(':').nth(1).unwrap_or("");
-          let raw_member = member_node.text().unwrap_or_default().to_owned();
-          let member = raw_member.split(':').nth(1).unwrap_or("");
+          let dimension = member_node
+            .attribute("dimension")
+            .and_then(|s| s.strip_prefix("xxx:"))
+            .unwrap_or("");
+          let member = member_node.text().unwrap_or("");
 
           segments.push(Segment {
-            dimension: dimension.to_owned(),
-            member: member.to_owned(),
+            dimension: Rc::new(dimension.to_owned()),
+            member: Rc::new(member.to_owned()),
           });
         }
       }
@@ -174,9 +176,9 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
         contexts.insert(
           context_id,
           Context {
-            entity,
+            entity: Rc::new(entity.to_owned()),
             segments,
-            period,
+            period: Rc::new(period),
           },
         );
       }
