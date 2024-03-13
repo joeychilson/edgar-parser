@@ -3,6 +3,8 @@ use napi_derive::napi;
 use roxmltree::{Document as XMLDoc, Node};
 use std::{collections::HashMap, rc::Rc};
 
+use crate::{get_date, parse_value};
+
 #[napi(object)]
 pub struct XBRL {
   pub facts: Vec<Fact>,
@@ -184,26 +186,6 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
   contexts
 }
 
-fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
-  let str = value_str.trim();
-  if let Ok(value) = str.parse::<bool>() {
-    env.get_boolean(value).map(|v| v.into_unknown())
-  } else if let Ok(value) = str.parse::<i64>() {
-    env.create_int64(value).map(|v| v.into_unknown())
-  } else if let Ok(value) = str.parse::<f64>() {
-    env.create_double(value).map(|v| v.into_unknown())
-  } else {
-    env.create_string(str).map(|v| v.into_unknown())
-  }
-}
-
 fn get_text_or_default(node: Option<Node>) -> String {
   node.and_then(|n| n.text()).unwrap_or_default().to_owned()
-}
-
-fn get_date(node: &Node, tag: &str) -> Option<String> {
-  node
-    .children()
-    .find(|n| n.has_tag_name(tag))
-    .and_then(|n| n.text().map(str::to_owned))
 }
