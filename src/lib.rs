@@ -5,39 +5,14 @@ pub mod ownership;
 pub mod thirteenf;
 pub mod xbrl;
 
-fn get_string(node: &Node, tag: &str) -> Result<String, String> {
+fn parse_date(node: &Node, tag: &str) -> Option<String> {
   node
     .children()
-    .find(|node| node.has_tag_name(tag))
-    .and_then(|node| node.text())
-    .map(|s| s.to_string())
-    .ok_or(format!("missing tag: {}", tag))
+    .find(|n| n.has_tag_name(tag))
+    .and_then(|n| n.text().map(str::to_owned))
 }
 
-fn get_int32(node: &Node, tag: &str) -> Result<i32, String> {
-  let text = get_string(node, tag)?;
-  text
-    .parse::<i32>()
-    .map_err(|_| format!("failed to parse int32 from tag: {}", tag))
-}
-
-fn get_int64(node: &Node, tag: &str) -> Result<i64, String> {
-  let text = get_string(node, tag)?;
-  text
-    .parse::<i64>()
-    .map_err(|_| format!("failed to parse int64 from tag: {}", tag))
-}
-
-fn get_bool(node: &Node, tag: &str) -> Result<bool, String> {
-  let text = get_string(node, tag)?;
-  match text.to_uppercase().as_str() {
-    "1" | "Y" | "TRUE" => Ok(true),
-    "0" | "N" | "FALSE" => Ok(false),
-    _ => Err(format!("failed to parse bool from tag: {}", tag)),
-  }
-}
-
-fn get_ints(node: &Node, tag: &str) -> Vec<i32> {
+fn parse_ints(node: &Node, tag: &str) -> Vec<i32> {
   node
     .children()
     .filter(|node| node.has_tag_name(tag))
@@ -46,11 +21,12 @@ fn get_ints(node: &Node, tag: &str) -> Vec<i32> {
     .collect()
 }
 
-fn get_date(node: &Node, tag: &str) -> Option<String> {
+fn parse_string<T: ParseFromString>(node: &Node, tag: &str) -> Option<T::Output> {
   node
     .children()
-    .find(|n| n.has_tag_name(tag))
-    .and_then(|n| n.text().map(str::to_owned))
+    .find(|node| node.has_tag_name(tag))
+    .and_then(|node| node.text())
+    .and_then(|text| T::parse(text).ok())
 }
 
 fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
@@ -63,5 +39,48 @@ fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
     env.create_double(value).map(|v| v.into_unknown())
   } else {
     env.create_string(str).map(|v| v.into_unknown())
+  }
+}
+
+trait ParseFromString {
+  type Output;
+  fn parse(s: &str) -> Result<Self::Output, String>;
+}
+
+impl ParseFromString for String {
+  type Output = String;
+
+  fn parse(s: &str) -> Result<Self::Output, String> {
+    Ok(s.to_owned())
+  }
+}
+
+impl ParseFromString for i32 {
+  type Output = i32;
+
+  fn parse(s: &str) -> Result<Self::Output, String> {
+    s.parse::<i32>()
+      .map_err(|_| format!("failed to parse i32 from: {}", s))
+  }
+}
+
+impl ParseFromString for i64 {
+  type Output = i64;
+
+  fn parse(s: &str) -> Result<Self::Output, String> {
+    s.parse::<i64>()
+      .map_err(|_| format!("failed to parse i64 from: {}", s))
+  }
+}
+
+impl ParseFromString for bool {
+  type Output = bool;
+
+  fn parse(s: &str) -> Result<Self::Output, String> {
+    match s.to_uppercase().as_str() {
+      "1" | "Y" | "TRUE" => Ok(true),
+      "0" | "N" | "FALSE" => Ok(false),
+      _ => Err(format!("failed to parse bool from: {}", s)),
+    }
   }
 }

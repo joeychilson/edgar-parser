@@ -3,7 +3,7 @@ use napi_derive::napi;
 use roxmltree::{Document as XMLDoc, Node};
 use std::{collections::HashMap, rc::Rc};
 
-use crate::{get_date, parse_value};
+use crate::{parse_date, parse_value};
 
 #[napi(object)]
 pub struct XBRL {
@@ -166,9 +166,9 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
         .find(|node| node.has_tag_name("period"))
       {
         let period = Period {
-          instant: get_date(&period_node, "instant"),
-          start_date: get_date(&period_node, "startDate"),
-          end_date: get_date(&period_node, "endDate"),
+          instant: parse_date(&period_node, "instant"),
+          start_date: parse_date(&period_node, "startDate"),
+          end_date: parse_date(&period_node, "endDate"),
         };
 
         contexts.insert(

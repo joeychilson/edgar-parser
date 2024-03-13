@@ -27,11 +27,11 @@ export interface Issuer {
   tradingSymbol: string
 }
 export interface ReportingOwner {
-  id: ReportingOwnerId
+  id: ReportingOwnerID
   address?: ReportingOwnerAddress
   relationship?: ReportingOwnerRelationship
 }
-export interface ReportingOwnerId {
+export interface ReportingOwnerID {
   cik: string
   ccc?: string
   name?: string
