@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser-linux-x64-gnu",
   "description": "A linux-x64-gnu binary for edgar-parser",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "keywords": [
     "edgar",
     "filings",
