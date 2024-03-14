@@ -1,7 +1,7 @@
 {
   "name": "edgar-parser-darwin-arm64",
   "description": "A darwin-arm64 binary for edgar-parser",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "keywords": [
     "edgar",
     "filings",
