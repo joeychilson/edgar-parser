@@ -25,6 +25,7 @@ pub struct FilerInfo {
   pub contact: Option<Contact>,
   pub notifications: Option<Notifications>,
   pub period_of_report: String,
+  pub denovo_request: Option<bool>,
 }
 
 #[napi(object)]
@@ -63,7 +64,7 @@ pub struct FormData {
   pub cover_page: CoverPage,
   pub signature_block: SignatureBlock,
   pub summary_page: Option<SummaryPage>,
-  pub documents: Vec<OtherDocument>,
+  pub documents: Option<Vec<OtherDocument>>,
 }
 
 #[napi(object)]
@@ -75,7 +76,9 @@ pub struct CoverPage {
   pub filing_manager: FilingManager,
   pub report_type: String,
   pub form_13f_file_number: Option<String>,
-  pub other_manager_info: Option<OtherManagerInfo>,
+  pub crd_number: Option<i32>,
+  pub sec_file_number: Option<String>,
+  pub other_managers_info: Option<OtherManagersInfo>,
   pub provide_info_for_instruction_5: bool,
   pub additional_information: Option<String>,
 }
@@ -105,7 +108,7 @@ pub struct Address {
 }
 
 #[napi(object)]
-pub struct OtherManagerInfo {
+pub struct OtherManagersInfo {
   pub other_manager: Option<OtherManager>,
 }
 
@@ -114,6 +117,8 @@ pub struct OtherManager {
   pub cik: Option<String>,
   pub name: Option<String>,
   pub form_13f_file_number: Option<String>,
+  pub crd_number: Option<i32>,
+  pub sec_file_number: Option<String>,
 }
 
 #[napi(object)]
@@ -165,7 +170,7 @@ pub struct TableEntry {
   pub shares_or_print_amount: SharesOrPrintAmount,
   pub put_call: Option<String>,
   pub investment_discretion: String,
-  pub other_manager: Vec<i32>,
+  pub other_manager: Option<Vec<i32>>,
   pub voting_authority: VotingAuthority,
 }
 
@@ -228,6 +233,7 @@ fn parse_filer_info(node: &Node) -> Result<FilerInfo, String> {
       let notifications = parse_notifications(&filer_info_node)?;
       let period_of_report = parse_string::<String>(&filer_info_node, "periodOfReport")
         .ok_or("periodOfReport not found".to_string())?;
+      let denovo_request = parse_string::<bool>(&filer_info_node, "denovoRequest");
 
       Ok(FilerInfo {
         live_test_flag,
@@ -236,6 +242,7 @@ fn parse_filer_info(node: &Node) -> Result<FilerInfo, String> {
         contact,
         notifications,
         period_of_report,
+        denovo_request,
       })
     })
 }
@@ -294,9 +301,9 @@ fn parse_contact(node: &Node) -> Result<Option<Contact>, String> {
     .children()
     .find(|node| node.has_tag_name("contact"))
     .map(|contact_node| {
-      let name = parse_string::<String>(&contact_node, "name");
-      let phone_number = parse_string::<String>(&contact_node, "phoneNumber");
-      let email_address = parse_string::<String>(&contact_node, "emailAddress");
+      let name = parse_string::<String>(&contact_node, "contactName");
+      let phone_number = parse_string::<String>(&contact_node, "contactPhoneNumber");
+      let email_address = parse_string::<String>(&contact_node, "contactEmailAddress");
 
       Ok(Contact {
         name,
@@ -328,7 +335,7 @@ fn parse_form_data(node: &Node) -> Result<FormData, String> {
       let cover_page = parse_cover_page(&form_data_node)?;
       let signature_block = parse_signature_block(&form_data_node)?;
       let summary_page = parse_summary_page(&form_data_node)?;
-      let documents = parse_documents(&form_data_node)?;
+      let documents = parse_documents(&form_data_node);
 
       Ok(FormData {
         cover_page,
@@ -349,13 +356,15 @@ fn parse_cover_page(node: &Node) -> Result<CoverPage, String> {
         parse_string::<String>(&cover_page_node, "reportCalendarOrQuarter")
           .ok_or("reportCalendarOrQuarter not found".to_string())?;
       let is_amendment = parse_string::<bool>(&cover_page_node, "isAmendment");
-      let amendment_number = parse_string::<i32>(&cover_page_node, "amendmentNumber");
+      let amendment_number = parse_string::<i32>(&cover_page_node, "amendmentNo");
       let amendment_info = parse_amendment_info(&cover_page_node)?;
       let filing_manager = parse_filing_manager(&cover_page_node)?;
       let report_type = parse_string::<String>(&cover_page_node, "reportType")
         .ok_or("reportType not found".to_string())?;
       let form_13f_file_number = parse_string::<String>(&cover_page_node, "form13FFileNumber");
-      let other_manager_info = parse_other_manager_info(&cover_page_node)?;
+      let crd_number = parse_string::<i32>(&cover_page_node, "crdNumber");
+      let sec_file_number = parse_string::<String>(&cover_page_node, "secFileNumber");
+      let other_managers_info = parse_other_managers_info(&cover_page_node)?;
       let provide_info_for_instruction_5 =
         parse_string::<bool>(&cover_page_node, "provideInfoForInstruction5")
           .ok_or("provideInfoForInstruction5 not found".to_string())?;
@@ -370,7 +379,9 @@ fn parse_cover_page(node: &Node) -> Result<CoverPage, String> {
         filing_manager,
         report_type,
         form_13f_file_number,
-        other_manager_info,
+        crd_number,
+        sec_file_number,
+        other_managers_info,
         provide_info_for_instruction_5,
         additional_information,
       })
@@ -440,13 +451,13 @@ fn parse_filing_manager_address(node: &Node) -> Result<Address, String> {
     })
 }
 
-fn parse_other_manager_info(node: &Node) -> Result<Option<OtherManagerInfo>, String> {
+fn parse_other_managers_info(node: &Node) -> Result<Option<OtherManagersInfo>, String> {
   node
     .children()
-    .find(|node| node.has_tag_name("otherManagerInfo"))
+    .find(|node| node.has_tag_name("otherManagersInfo"))
     .map(|other_manager_info_node| {
       let other_manager = parse_other_manager(&other_manager_info_node)?;
-      Ok(OtherManagerInfo { other_manager })
+      Ok(OtherManagersInfo { other_manager })
     })
     .transpose()
 }
@@ -459,11 +470,15 @@ fn parse_other_manager(node: &Node) -> Result<Option<OtherManager>, String> {
       let cik = parse_string::<String>(&other_manager_node, "cik");
       let name = parse_string::<String>(&other_manager_node, "name");
       let form_13f_file_number = parse_string::<String>(&other_manager_node, "form13FFileNumber");
+      let crd_number = parse_string::<i32>(&other_manager_node, "crdNumber");
+      let sec_file_number = parse_string::<String>(&other_manager_node, "secFileNumber");
 
       Ok(OtherManager {
         cik,
         name,
         form_13f_file_number,
+        crd_number,
+        sec_file_number,
       })
     })
     .transpose()
@@ -545,11 +560,12 @@ fn parse_other_managers(node: &Node) -> Result<Vec<OtherManagerWithSequence>, St
       })
     })
     .collect();
+
   Ok(managers)
 }
 
-fn parse_documents(node: &Node) -> Result<Vec<OtherDocument>, String> {
-  let documents = node
+fn parse_documents(node: &Node) -> Option<Vec<OtherDocument>> {
+  let documents: Vec<OtherDocument> = node
     .children()
     .filter(|node| node.has_tag_name("documents"))
     .flat_map(|node| node.children())
@@ -568,7 +584,8 @@ fn parse_documents(node: &Node) -> Result<Vec<OtherDocument>, String> {
       })
     })
     .collect();
-  Ok(documents)
+
+  Some(documents)
 }
 
 #[napi]
@@ -611,7 +628,7 @@ pub fn parse_form13f_table(table: String) -> Result<Form13FTable, Error> {
         shares_or_print_amount,
         put_call,
         investment_discretion,
-        other_manager,
+        other_manager: Some(other_manager),
         voting_authority,
       })
     })

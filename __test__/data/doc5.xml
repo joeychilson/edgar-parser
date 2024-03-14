@@ -1,0 +1,332 @@
+<?xml version="1.0"?>
+<ownershipDocument>
+
+    <documentType>5</documentType>
+
+    <periodOfReport>2002-09-15</periodOfReport>
+
+    <notSubjectToSection16>1</notSubjectToSection16>
+
+    <issuer>
+        <issuerCik>1212121212</issuerCik>
+        <issuerTradingSymbol>AWI</issuerTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0000343434</rptOwnerCik>
+            <rptOwnerCcc>a#ofc0rn</rptOwnerCcc>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerStreet1>123 Main St</rptOwnerStreet1>
+            <rptOwnerStreet2>Apt #44</rptOwnerStreet2>
+            <rptOwnerCity>Anywhere</rptOwnerCity>
+            <rptOwnerState>VA</rptOwnerState>
+            <rptOwnerZipCode>21212</rptOwnerZipCode>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>1</isDirector>
+            <isOfficer>1</isOfficer>
+            <isTenPercentOwner>0</isTenPercentOwner>
+            <isOther>1</isOther>
+            <officerTitle>President and CEO</officerTitle>
+            <otherText>Public Affairs Officer</otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>1212121212</rptOwnerCik>
+            <rptOwnerCcc>a#ofr1ce</rptOwnerCcc>
+        </reportingOwnerId>
+        <reportingOwnerRelationship>
+            <isDirector>1</isDirector>
+            <isOfficer>1</isOfficer>
+            <isTenPercentOwner>0</isTenPercentOwner>
+            <isOther>1</isOther>
+            <officerTitle>President and CEO</officerTitle>
+            <otherText>Public Affairs Officer</otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+	
+	<aff10b5One>1</aff10b5One>
+
+	<nonDerivativeTable>
+
+		<nonDerivativeTransaction>
+			<securityTitle>
+				<value>Common Stock</value>
+			</securityTitle>
+			<transactionDate>
+				<value>2003-05-01</value>
+			</transactionDate>
+			<transactionCoding>
+				<transactionFormType>5</transactionFormType>
+				<transactionCode>A</transactionCode>
+				<equitySwapInvolved>1</equitySwapInvolved>
+				<footnoteId id="F4"/>
+				<footnoteId id="F5"/>
+			</transactionCoding>
+			<transactionAmounts>
+				<transactionShares>
+					<value>2000</value>
+				</transactionShares>
+				<transactionPricePerShare>
+					<value>120</value>
+				</transactionPricePerShare>
+				<transactionAcquiredDisposedCode>
+					<value>D</value>
+				</transactionAcquiredDisposedCode>
+			</transactionAmounts>
+			<postTransactionAmounts>
+				<sharesOwnedFollowingTransaction>
+					<value>22000</value>
+				</sharesOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>I</value>
+					<footnoteId id="F3"/>
+				</directOrIndirectOwnership>
+				<natureOfOwnership>
+					<value>This describes the nature of the ownership.</value>
+				</natureOfOwnership>
+			</ownershipNature>
+		</nonDerivativeTransaction>
+
+		<nonDerivativeTransaction>
+			<securityTitle>
+				<value>Common Stock</value>
+			</securityTitle>
+			<transactionDate>
+				<value>2002-11-01</value>
+			</transactionDate>
+			<deemedExecutionDate>
+				<value>2002-11-02</value>
+			</deemedExecutionDate>
+			<transactionCoding>
+				<transactionFormType>4</transactionFormType>
+				<transactionCode>J</transactionCode>
+				<equitySwapInvolved>0</equitySwapInvolved>
+				<footnoteId id="F4"/>
+				<footnoteId id="F5"/>
+			</transactionCoding>
+			<transactionTimeliness>
+				<value></value>
+			</transactionTimeliness>
+			<transactionAmounts>
+				<transactionShares>
+					<value>2000</value>
+				</transactionShares>
+				<transactionPricePerShare>
+					<value>120</value>
+				</transactionPricePerShare>
+				<transactionAcquiredDisposedCode>
+					<value>A</value>
+				</transactionAcquiredDisposedCode>
+			</transactionAmounts>
+			<postTransactionAmounts>
+				<sharesOwnedFollowingTransaction>
+					<value>10000</value>
+				</sharesOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>I</value>
+					<footnoteId id="F3"/>
+				</directOrIndirectOwnership>
+				<natureOfOwnership>
+					<value>This describes the nature of the ownership.</value>
+				</natureOfOwnership>
+			</ownershipNature>
+		</nonDerivativeTransaction>
+
+		<nonDerivativeHolding>
+			<securityTitle>
+				<value>Preferred Stock Options</value>
+				<footnoteId id="F1"/>
+			</securityTitle>
+			<postTransactionAmounts>
+				<sharesOwnedFollowingTransaction>
+					<value>33333</value>
+				</sharesOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>D</value>
+				</directOrIndirectOwnership>
+				<natureOfOwnership>
+					<value></value>
+				</natureOfOwnership>
+			</ownershipNature>
+		</nonDerivativeHolding>
+
+		<nonDerivativeTransaction>
+			<securityTitle>
+				<value>Preferred Stock Options</value>
+				<footnoteId id="F1"/>
+				<footnoteId id="F2"/>
+				<footnoteId id="F3"/>
+			</securityTitle>
+			<transactionDate>
+				<value>2002-11-02</value>
+			</transactionDate>
+			<deemedExecutionDate>
+				<value>2002-11-03</value>
+			</deemedExecutionDate>
+			<transactionCoding>
+				<transactionFormType>5</transactionFormType>
+				<transactionCode>S</transactionCode>
+				<equitySwapInvolved>1</equitySwapInvolved>
+			</transactionCoding>
+			<transactionAmounts>
+				<transactionShares>
+					<value>33333</value>
+					<footnoteId id="F2"/>
+				</transactionShares>
+				<transactionPricePerShare>
+					<value>0</value>
+				</transactionPricePerShare>
+				<transactionAcquiredDisposedCode>
+					<value>D</value>
+				</transactionAcquiredDisposedCode>
+			</transactionAmounts>
+			<postTransactionAmounts>
+				<valueOwnedFollowingTransaction>
+					<value>2111111</value>
+				</valueOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>D</value>
+				</directOrIndirectOwnership>
+			</ownershipNature>
+		</nonDerivativeTransaction>
+
+	</nonDerivativeTable>
+
+	<derivativeTable>
+
+		<derivativeHolding>
+			<securityTitle>
+				<value>Derived Stock (HOLDING)</value>
+			</securityTitle>
+			<conversionOrExercisePrice>
+				<value>50.55</value>
+				<footnoteId id="F5"/>
+			</conversionOrExercisePrice>
+			<transactionCoding>
+				<transactionFormType>3</transactionFormType>
+				<footnoteId id="F2"/>
+			</transactionCoding>
+			<exerciseDate>
+				<value>1980-12-25</value>
+			</exerciseDate>
+			<expirationDate>
+				<value>1980-12-25</value>
+				<footnoteId id="F4"/>
+			</expirationDate>
+			<underlyingSecurity>
+				<underlyingSecurityTitle>
+					<value>Derived Stock (HOLDING)</value>
+				</underlyingSecurityTitle>
+				<underlyingSecurityValue>
+					<value>100.12</value>
+				</underlyingSecurityValue>
+			</underlyingSecurity>
+			<postTransactionAmounts>
+				<sharesOwnedFollowingTransaction>
+					<value>0</value>
+				</sharesOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>D</value>
+				</directOrIndirectOwnership>
+			</ownershipNature>
+		</derivativeHolding>
+
+		<derivativeTransaction>
+			<securityTitle>
+				<value>Derived Stock (HOLDING)</value>
+				<footnoteId id="F1"/>
+				<footnoteId id="F3"/>
+			</securityTitle>
+			<conversionOrExercisePrice>
+				<value>50.55</value>
+				<footnoteId id="F5"/>
+			</conversionOrExercisePrice>
+			<transactionDate>
+				<value>1980-12-25</value>
+			</transactionDate>
+			<transactionCoding>
+				<transactionFormType>5</transactionFormType>
+				<transactionCode>C</transactionCode>
+				<equitySwapInvolved>0</equitySwapInvolved>
+			</transactionCoding>
+			<transactionAmounts>
+				<transactionTotalValue>
+					<value>500000</value>
+					<footnoteId id="F2"/>
+				</transactionTotalValue>
+				<transactionPricePerShare>
+					<value>1001.23</value>
+					<footnoteId id="F3"/>
+				</transactionPricePerShare>
+				<transactionAcquiredDisposedCode>
+					<value>A</value>
+				</transactionAcquiredDisposedCode>
+			</transactionAmounts>
+			<exerciseDate>
+				<value>1980-12-25</value>
+			</exerciseDate>
+			<expirationDate>
+				<value>1980-12-25</value>
+				<footnoteId id="F4"/>
+			</expirationDate>
+			<underlyingSecurity>
+				<underlyingSecurityTitle>
+					<value>Derived Stock (HOLDING)</value>
+				</underlyingSecurityTitle>
+				<underlyingSecurityValue>
+					<value>100.12</value>
+				</underlyingSecurityValue>
+			</underlyingSecurity>
+			<postTransactionAmounts>
+				<valueOwnedFollowingTransaction>
+					<value>3210.88</value>
+				</valueOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>D</value>
+				</directOrIndirectOwnership>
+			</ownershipNature>
+		</derivativeTransaction>
+
+	</derivativeTable>
+
+    <footnotes>
+        <footnote id="F1">Footnote 1.</footnote>
+        <footnote id="F2">Footnote 2.</footnote>
+        <footnote id="F3">Footnote 3.</footnote>
+        <footnote id="F4">Footnote 4.</footnote>
+        <footnote id="F5">Footnote 5.</footnote>
+    </footnotes>
+
+	<remarks>This is just a general comment.</remarks>
+
+    <ownerSignature>
+        <signatureName>Jane Doe</signatureName>
+        <signatureDate>2002-11-23</signatureDate>
+    </ownerSignature>
+    <ownerSignature>
+        <signatureName>John Q. Public</signatureName>
+        <signatureDate>2002-11-22</signatureDate>
+    </ownerSignature>
+    <ownerSignature>
+        <signatureName>Uncle Sam</signatureName>
+        <signatureDate>2002-11-24</signatureDate>
+    </ownerSignature>
+
+</ownershipDocument>

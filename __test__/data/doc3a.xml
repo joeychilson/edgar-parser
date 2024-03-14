@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<ownershipDocument>
+
+    <documentType>3/A</documentType>
+
+    <periodOfReport>2002-09-15</periodOfReport>
+
+    <dateOfOriginalSubmission>2003-03-01</dateOfOriginalSubmission>
+
+    <issuer>
+        <issuerCik>1212121212</issuerCik>
+        <issuerTradingSymbol>AWI</issuerTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>343434</rptOwnerCik>
+            <rptOwnerCcc>a#ofc0rn</rptOwnerCcc>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerStreet1>123 Main St</rptOwnerStreet1>
+            <rptOwnerStreet2>Apt #44</rptOwnerStreet2>
+            <rptOwnerCity>Anywhere</rptOwnerCity>
+            <rptOwnerState>VA</rptOwnerState>
+            <rptOwnerZipCode>21212</rptOwnerZipCode>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>true</isDirector>
+            <isOfficer>1</isOfficer>
+            <isTenPercentOwner>false</isTenPercentOwner>
+            <isOther>true</isOther>
+            <officerTitle>President and CEO</officerTitle>
+            <otherText>Public Affairs Officer</otherText>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+	<nonDerivativeTable>
+
+		<nonDerivativeHolding>
+			<securityTitle>
+				<value>Preferred Stock Options</value>
+				<footnoteId id="F1"/>
+			</securityTitle>
+			<postTransactionAmounts>
+				<sharesOwnedFollowingTransaction>
+					<value>33333</value>
+				</sharesOwnedFollowingTransaction>
+			</postTransactionAmounts>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>D</value>
+				</directOrIndirectOwnership>
+				<natureOfOwnership>
+					<value></value>
+				</natureOfOwnership>
+			</ownershipNature>
+		</nonDerivativeHolding>
+
+	</nonDerivativeTable>
+
+	<derivativeTable>
+
+		<derivativeHolding>
+			<securityTitle>
+				<value>Derived Stock (HOLDING)</value>
+			</securityTitle>
+			<conversionOrExercisePrice>
+				<value>50.55</value>
+				<footnoteId id="F5"/>
+			</conversionOrExercisePrice>
+			<exerciseDate>
+				<footnoteId id="F2"/>
+			</exerciseDate>
+			<expirationDate>
+				<value>1980-12-25</value>
+				<footnoteId id="F4"/>
+			</expirationDate>
+			<underlyingSecurity>
+				<underlyingSecurityTitle>
+					<value>Derived Stock (HOLDING)</value>
+				</underlyingSecurityTitle>
+				<underlyingSecurityValue>
+					<value>100.12</value>
+					<footnoteId id="F3"/>
+				</underlyingSecurityValue>
+			</underlyingSecurity>
+			<ownershipNature>
+				<directOrIndirectOwnership>
+					<value>D</value>
+				</directOrIndirectOwnership>
+			</ownershipNature>
+		</derivativeHolding>
+
+	</derivativeTable>
+
+    <footnotes>
+		<footnote id="F1">Footnote 1.</footnote>
+		<footnote id="F2">Footnote 2.</footnote>
+		<footnote id="F3">Footnote 3.</footnote>
+		<footnote id="F4">Footnote 4.</footnote>
+		<footnote id="F5">Footnote 5.</footnote>
+    </footnotes>
+
+	<remarks>This is just a general comment.</remarks>
+
+    <ownerSignature>
+        <signatureName>Jane Doe</signatureName>
+        <signatureDate>2002-11-23</signatureDate>
+    </ownerSignature>
+    <ownerSignature>
+        <signatureName>John Q. Public</signatureName>
+        <signatureDate>2002-11-22</signatureDate>
+    </ownerSignature>
+    <ownerSignature>
+        <signatureName>Uncle Sam</signatureName>
+        <signatureDate>2002-11-24</signatureDate>
+    </ownerSignature>
+
+</ownershipDocument>

@@ -4,12 +4,10 @@ import { parseForm13F, parseForm13FTable, parseOwnershipForm, parseXbrl } from '
 
 test('parse 8k from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/8k.xml', 'utf8')
+  const file = fs.readFileSync('./__test__/data/doc8k.xml', 'utf8')
   const result = parseXbrl(file)
-
   const endTime = Date.now()
-  console.log('Parsed 8K:', endTime - startTime, 'ms')
+  t.log('Parsed 8K:', endTime - startTime, 'ms')
 
   t.is(result.facts.length, 29)
 
@@ -29,12 +27,10 @@ test('parse 8k from native', async (t) => {
 
 test('parse 10k from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/10k.xml', 'utf8')
+  const file = fs.readFileSync('./__test__/data/doc10k.xml', 'utf8')
   const result = parseXbrl(file)
-
   const endTime = Date.now()
-  console.log('Parsed 10K:', endTime - startTime, 'ms')
+  t.log('Parsed 10K:', endTime - startTime, 'ms')
 
   t.is(result.facts.length, 3460)
 
@@ -54,12 +50,10 @@ test('parse 10k from native', async (t) => {
 
 test('parse 10q from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/10q.xml', 'utf8')
+  const file = fs.readFileSync('./__test__/data/doc10q.xml', 'utf8')
   const result = parseXbrl(file)
-
   const endTime = Date.now()
-  console.log('Parsed 10Q:', endTime - startTime, 'ms')
+  t.log('Parsed 10Q:', endTime - startTime, 'ms')
 
   t.is(result.facts.length, 1578)
 
@@ -77,165 +71,1051 @@ test('parse 10q from native', async (t) => {
   t.is(period.end_date, undefined)
 })
 
-test('parse form 13f from native', async (t) => {
+test('parse form 3 from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/form13f.xml', 'utf8')
-  const result = parseForm13F(file)
-
+  const file = fs.readFileSync('./__test__/data/doc3.xml', 'utf8')
+  const result = parseOwnershipForm(file)
   const endTime = Date.now()
-  console.log('Parsed Form 13F:', endTime - startTime, 'ms')
+  t.log('Parsed Form 3:', endTime - startTime, 'ms')
 
-  t.is(result.schemaVersion, 'X0202')
+  t.is(result.documentType, '3')
+  t.is(result.periodOfReport, '2002-09-15')
 
-  const headerData = result.headerData
-  t.is(headerData.submissionType, '13F-HR')
+  t.deepEqual(result.issuer, { cik: '1212121212', tradingSymbol: 'AWI' })
 
-  const filerInfo = headerData.filerInfo
-  t.is(filerInfo.periodOfReport, '12-31-2023')
-  t.is(filerInfo.liveTestFlag, 'LIVE')
-  t.is(filerInfo.filer.credentials.cik, '0001067983')
+  t.is(result.reportingOwners.length, 1)
+  t.deepEqual(result.reportingOwners[0], {
+    id: { cik: '343434', ccc: 'a#ofc0rn' },
+    address: {
+      street1: '123 Main St',
+      street2: 'Apt #44',
+      city: 'Anywhere',
+      state: 'VA',
+      zipCode: '21212',
+    },
+    relationship: {
+      isDirector: true,
+      isOfficer: true,
+      isTenPercentOwner: false,
+      isOther: true,
+      officerTitle: 'President and CEO',
+      otherText: 'Public Affairs Officer',
+    },
+  })
 
-  const formData = result.formData
-  t.is(formData.coverPage.reportCalendarOrQuarter, '12-31-2023')
-  t.is(formData.coverPage.isAmendment, false)
-  t.is(formData.coverPage.filingManager.name, 'Berkshire Hathaway Inc')
+  t.is(result.nonDerivativeTable.holdings.length, 1)
+  t.deepEqual(result.nonDerivativeTable.holdings[0], {
+    securityTitle: { value: 'Preferred Stock Options', footnoteIds: ['F1'] },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 33333, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+      natureOfOwnership: { value: '', footnoteIds: [] },
+    },
+  })
 
-  const signatureBlock = formData.signatureBlock
-  t.is(signatureBlock.name, 'Marc D. Hamburg')
-  t.is(signatureBlock.title, 'Senior Vice President')
-  t.is(signatureBlock.signatureDate, '02-14-2024')
+  t.is(result.derivativeTable.holdings.length, 1)
+  t.deepEqual(result.derivativeTable.holdings[0], {
+    securityTitle: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+    conversionOrExercisePrice: { value: 50.55, footnoteIds: ['F5'] },
+    exerciseDate: { footnoteIds: ['F2'] },
+    expirationDate: { value: '1980-12-25', footnoteIds: ['F4'] },
+    underlyingSecurity: {
+      title: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+      value: { value: 100.12, footnoteIds: ['F3'] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+    },
+  })
 
-  const summaryPage = formData.summaryPage
-  t.is(summaryPage.otherIncludedManagersCount, 14)
-  t.is(summaryPage.tableEntryTotal, 138)
-  t.is(summaryPage.tableValueTotal, 347358074461)
+  t.is(result.footnotes.length, 5)
+  t.deepEqual(result.footnotes[0], { id: 'F1', note: 'Footnote 1.' })
+
+  t.is(result.remarks, 'This is just a general comment.')
+
+  t.is(result.ownerSignatures.length, 3)
+  t.deepEqual(result.ownerSignatures[0], { name: 'Jane Doe', date: '2002-11-23' })
 })
 
-test('parse form 13f table from native', async (t) => {
+test('parse form 3/A from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/form13f_table.xml', 'utf8')
-  const result = parseForm13FTable(file)
-
+  const file = fs.readFileSync('./__test__/data/doc3a.xml', 'utf8')
+  const result = parseOwnershipForm(file)
   const endTime = Date.now()
-  console.log('Parsed Form 13F Table:', endTime - startTime, 'ms')
+  t.log('Parsed Form 3/A:', endTime - startTime, 'ms')
 
-  t.is(result.entries.length, 138)
+  t.is(result.documentType, '3/A')
+  t.is(result.periodOfReport, '2002-09-15')
+  t.is(result.dateOfOriginalSubmission, '2003-03-01')
 
-  const entry = result.entries[0]
-  t.is(entry.nameOfIssuer, 'ALLY FINL INC')
-  t.is(entry.titleOfClass, 'COM')
-  t.is(entry.cusip, '02005N100')
-  t.is(entry.value, 444171051)
-  t.is(entry.sharesOrPrintAmount.amount, 12719675)
-  t.is(entry.sharesOrPrintAmount.sharesOrPrintType, 'SH')
-  t.is(entry.investmentDiscretion, 'DFND')
-  t.deepEqual(entry.otherManager, [4])
-  t.is(entry.votingAuthority.sole, 12719675)
-  t.is(entry.votingAuthority.shared, 0)
-  t.is(entry.votingAuthority.none, 0)
+  t.deepEqual(result.issuer, { cik: '1212121212', tradingSymbol: 'AWI' })
+
+  t.is(result.reportingOwners.length, 1)
+  t.deepEqual(result.reportingOwners[0], {
+    id: { cik: '343434', ccc: 'a#ofc0rn' },
+    address: {
+      street1: '123 Main St',
+      street2: 'Apt #44',
+      city: 'Anywhere',
+      state: 'VA',
+      zipCode: '21212',
+    },
+    relationship: {
+      isDirector: true,
+      isOfficer: true,
+      isTenPercentOwner: false,
+      isOther: true,
+      officerTitle: 'President and CEO',
+      otherText: 'Public Affairs Officer',
+    },
+  })
+
+  t.is(result.nonDerivativeTable.holdings.length, 1)
+  t.deepEqual(result.nonDerivativeTable.holdings[0], {
+    securityTitle: { value: 'Preferred Stock Options', footnoteIds: ['F1'] },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 33333, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+      natureOfOwnership: { value: '', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.derivativeTable.holdings.length, 1)
+  t.deepEqual(result.derivativeTable.holdings[0], {
+    securityTitle: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+    conversionOrExercisePrice: { value: 50.55, footnoteIds: ['F5'] },
+    exerciseDate: { footnoteIds: ['F2'] },
+    expirationDate: { value: '1980-12-25', footnoteIds: ['F4'] },
+    underlyingSecurity: {
+      title: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+      value: { value: 100.12, footnoteIds: ['F3'] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.footnotes.length, 5)
+  t.deepEqual(result.footnotes[0], { id: 'F1', note: 'Footnote 1.' })
+
+  t.is(result.remarks, 'This is just a general comment.')
+
+  t.is(result.ownerSignatures.length, 3)
+  t.deepEqual(result.ownerSignatures[0], { name: 'Jane Doe', date: '2002-11-23' })
 })
 
 test('parse form 4 from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/form4.xml', 'utf8')
+  const file = fs.readFileSync('./__test__/data/doc4.xml', 'utf8')
   const result = parseOwnershipForm(file)
-
   const endTime = Date.now()
-  console.log('Parsed Form 4:', endTime - startTime, 'ms')
+  t.log('Parsed Form 4:', endTime - startTime, 'ms')
 
-  t.is(result.schemaVersion, 'X0508')
   t.is(result.documentType, '4')
-  t.is(result.periodOfReport, '2024-03-11')
+  t.is(result.periodOfReport, '2003-09-15')
+  t.true(result.notSubjectToSection16)
 
-  t.deepEqual(result.issuer, {
-    cik: '0000789019',
-    name: 'MICROSOFT CORP',
-    tradingSymbol: 'MSFT',
-  })
+  t.deepEqual(result.issuer, { cik: '1212121212', tradingSymbol: 'AWI' })
 
-  t.deepEqual(result.reportingOwner, {
-    id: { cik: '0001626431', name: 'Hogan Kathleen T' },
+  t.is(result.reportingOwners.length, 2)
+  t.deepEqual(result.reportingOwners[0], {
+    id: { cik: '0000343434', ccc: 'a#ofc0rn' },
     address: {
-      street1: 'C/O MICROSOFT CORPORATION',
-      street2: 'ONE MICROSOFT WAY',
-      city: 'REDMOND',
-      state: 'WA',
-      zipCode: '98052-6399',
+      street1: '123 Main St',
+      street2: 'Apt #44',
+      city: 'Anywhere',
+      state: 'VA',
+      zipCode: '21212',
     },
     relationship: {
-      isDirector: false,
+      isDirector: true,
       isOfficer: true,
       isTenPercentOwner: false,
-      isOther: false,
-      officerTitle: 'EVP, Chief Human Resources Off',
+      isOther: true,
+      officerTitle: 'President and CEO',
+      otherText: 'Public Affairs Officer',
     },
   })
 
-  t.false(result.aff10B5One)
+  t.true(result.aff10B5One)
 
-  t.is(result.nonDerivativeTable.transactions.length, 1)
-  t.is(result.nonDerivativeTable.holdings.length, 0)
+  t.is(result.nonDerivativeTable.transactions.length, 2)
+  t.deepEqual(result.nonDerivativeTable.transactions[0], {
+    securityTitle: { value: 'Common Stock', footnoteIds: [] },
+    transactionDate: { value: '2002-11-01', footnoteIds: [] },
+    deemedExecutionDate: { value: '2002-11-02', footnoteIds: [] },
+    transactionCoding: {
+      formType: '5',
+      transactionCode: 'J',
+      equitySwapInvolved: true,
+      footnoteIds: ['F1', 'F2', 'F3'],
+    },
+    transactionTimeliness: { value: '', footnoteIds: ['F3'] },
+    transactionAmounts: {
+      shares: { value: 2000, footnoteIds: [] },
+      pricePerShare: { value: 0, footnoteIds: [] },
+      acquiredDisposedCode: { value: 'A', footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 999, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'I', footnoteIds: [] },
+      natureOfOwnership: { value: 'This describes the nature of the ownership.', footnoteIds: [] },
+    },
+  })
 
-  t.is(result.footnotes.length, 0)
+  t.is(result.nonDerivativeTable.holdings.length, 2)
+  t.deepEqual(result.nonDerivativeTable.holdings[1], {
+    securityTitle: { value: 'Common Stock Options', footnoteIds: [] },
+    postTransactionAmounts: {
+      valueOwnedFollowingTransaction: { value: 2222.33, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'I', footnoteIds: [] },
+      natureOfOwnership: { value: 'Owned Indirectly', footnoteIds: [] },
+    },
+  })
 
-  t.deepEqual(result.ownerSignature, {
-    name: 'Ann Habernigg, Attorney-in-Fact for Kathleen T. Hogan',
-    date: '2024-03-12',
+  t.is(result.derivativeTable.holdings.length, 1)
+  t.is(result.derivativeTable.transactions.length, 1)
+  t.deepEqual(result.derivativeTable.transactions[0], {
+    securityTitle: { value: 'Derived Stock (HOLDING)', footnoteIds: ['F1', 'F3'] },
+    conversionOrExercisePrice: { value: 50.55, footnoteIds: ['F5'] },
+    transactionDate: { value: '1980-12-25', footnoteIds: [] },
+    transactionCoding: {
+      formType: '4',
+      transactionCode: 'C',
+      equitySwapInvolved: false,
+      footnoteIds: [],
+    },
+    transactionAmounts: {
+      shares: { value: 0, footnoteIds: [] },
+      pricePerShare: { value: 1001.23, footnoteIds: ['F2'] },
+      acquiredDisposedCode: { value: 'A', footnoteIds: [] },
+    },
+    exerciseDate: { value: '1980-12-25', footnoteIds: [] },
+    expirationDate: { value: '1980-12-25', footnoteIds: ['F4'] },
+    underlyingSecurity: {
+      title: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+      value: { value: 100.12, footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      valueOwnedFollowingTransaction: { value: 3210.88, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.footnotes.length, 5)
+  t.deepEqual(result.footnotes[0], { id: 'F1', note: 'Footnote 1.' })
+
+  t.is(result.remarks, 'This is just a general comment.')
+
+  t.is(result.ownerSignatures.length, 3)
+  t.deepEqual(result.ownerSignatures[0], { name: 'Jane Doe', date: '2002-11-23' })
+})
+
+test('parse form 4/A from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc4a.xml', 'utf8')
+  const result = parseOwnershipForm(file)
+  const endTime = Date.now()
+  t.log('Parsed Form 4/A:', endTime - startTime, 'ms')
+
+  t.is(result.documentType, '4/A')
+  t.is(result.periodOfReport, '2003-09-15')
+  t.is(result.dateOfOriginalSubmission, '2003-03-01')
+  t.true(result.notSubjectToSection16)
+
+  t.deepEqual(result.issuer, { cik: '1212121212', tradingSymbol: 'AWI' })
+
+  t.is(result.reportingOwners.length, 2)
+  t.deepEqual(result.reportingOwners[0], {
+    id: { cik: '0000343434', ccc: 'a#ofc0rn' },
+    address: {
+      street1: '123 Main St',
+      street2: 'Apt #44',
+      city: 'Anywhere',
+      state: 'VA',
+      zipCode: '21212',
+    },
+    relationship: {
+      isDirector: true,
+      isOfficer: true,
+      isTenPercentOwner: false,
+      isOther: true,
+      officerTitle: 'President and CEO',
+      otherText: 'Public Affairs Officer',
+    },
+  })
+
+  t.true(result.aff10B5One)
+
+  t.is(result.nonDerivativeTable.transactions.length, 2)
+  t.deepEqual(result.nonDerivativeTable.transactions[0], {
+    securityTitle: { value: 'Common Stock', footnoteIds: [] },
+    transactionDate: { value: '2002-11-01', footnoteIds: [] },
+    deemedExecutionDate: { value: '2002-11-02', footnoteIds: [] },
+    transactionCoding: {
+      formType: '5',
+      transactionCode: 'J',
+      equitySwapInvolved: true,
+      footnoteIds: ['F1', 'F2', 'F3'],
+    },
+    transactionTimeliness: { value: '', footnoteIds: ['F3'] },
+    transactionAmounts: {
+      shares: { value: 2000, footnoteIds: [] },
+      pricePerShare: { value: 0, footnoteIds: [] },
+      acquiredDisposedCode: { value: 'A', footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 999, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'I', footnoteIds: [] },
+      natureOfOwnership: { value: 'This describes the nature of the ownership.', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.nonDerivativeTable.holdings.length, 2)
+  t.deepEqual(result.nonDerivativeTable.holdings[1], {
+    securityTitle: { value: 'Common Stock Options', footnoteIds: [] },
+    postTransactionAmounts: {
+      valueOwnedFollowingTransaction: { value: 2222.33, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'I', footnoteIds: [] },
+      natureOfOwnership: { value: 'Owned Indirectly', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.derivativeTable.holdings.length, 1)
+  t.is(result.derivativeTable.transactions.length, 1)
+  t.deepEqual(result.derivativeTable.transactions[0], {
+    securityTitle: { value: 'Derived Stock (HOLDING)', footnoteIds: ['F1', 'F3'] },
+    conversionOrExercisePrice: { value: 50.55, footnoteIds: ['F5'] },
+    transactionDate: { value: '1980-12-25', footnoteIds: [] },
+    transactionCoding: {
+      formType: '4',
+      transactionCode: 'C',
+      equitySwapInvolved: false,
+      footnoteIds: [],
+    },
+    transactionAmounts: {
+      shares: { value: 0, footnoteIds: [] },
+      pricePerShare: { value: 1001.23, footnoteIds: ['F2'] },
+      acquiredDisposedCode: { value: 'A', footnoteIds: [] },
+    },
+    exerciseDate: { value: '1980-12-25', footnoteIds: [] },
+    expirationDate: { value: '1980-12-25', footnoteIds: ['F4'] },
+    underlyingSecurity: {
+      title: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+      value: { value: 100.12, footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      valueOwnedFollowingTransaction: { value: 3210.88, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.footnotes.length, 5)
+  t.deepEqual(result.footnotes[0], { id: 'F1', note: 'Footnote 1.' })
+
+  t.is(result.remarks, 'This is just a general comment.')
+
+  t.is(result.ownerSignatures.length, 3)
+  t.deepEqual(result.ownerSignatures[0], { name: 'Jane Doe', date: '2002-11-23' })
+})
+
+test('parse form 5 from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc5.xml', 'utf8')
+  const result = parseOwnershipForm(file)
+  const endTime = Date.now()
+  t.log('Parsed Form 5:', endTime - startTime, 'ms')
+
+  t.is(result.documentType, '5')
+  t.is(result.periodOfReport, '2002-09-15')
+  t.true(result.notSubjectToSection16)
+
+  t.deepEqual(result.issuer, { cik: '1212121212', tradingSymbol: 'AWI' })
+
+  t.is(result.reportingOwners.length, 2)
+  t.deepEqual(result.reportingOwners[0], {
+    id: { cik: '0000343434', ccc: 'a#ofc0rn' },
+    address: {
+      street1: '123 Main St',
+      street2: 'Apt #44',
+      city: 'Anywhere',
+      state: 'VA',
+      zipCode: '21212',
+    },
+    relationship: {
+      isDirector: true,
+      isOfficer: true,
+      isTenPercentOwner: false,
+      isOther: true,
+      officerTitle: 'President and CEO',
+      otherText: 'Public Affairs Officer',
+    },
+  })
+
+  t.true(result.aff10B5One)
+
+  t.is(result.nonDerivativeTable.transactions.length, 3)
+  t.deepEqual(result.nonDerivativeTable.transactions[0], {
+    securityTitle: { value: 'Common Stock', footnoteIds: [] },
+    transactionDate: { value: '2003-05-01', footnoteIds: [] },
+    transactionCoding: {
+      formType: '5',
+      transactionCode: 'A',
+      equitySwapInvolved: true,
+      footnoteIds: ['F4', 'F5'],
+    },
+    transactionAmounts: {
+      shares: { value: 2000, footnoteIds: [] },
+      pricePerShare: { value: 120, footnoteIds: [] },
+      acquiredDisposedCode: { value: 'D', footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 22000, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'I', footnoteIds: ['F3'] },
+      natureOfOwnership: { value: 'This describes the nature of the ownership.', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.nonDerivativeTable.holdings.length, 1)
+  t.deepEqual(result.nonDerivativeTable.holdings[0], {
+    securityTitle: { value: 'Preferred Stock Options', footnoteIds: ['F1'] },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 33333, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+      natureOfOwnership: { value: '', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.derivativeTable.holdings.length, 1)
+  t.is(result.derivativeTable.transactions.length, 1)
+  t.deepEqual(result.derivativeTable.transactions[0], {
+    securityTitle: { value: 'Derived Stock (HOLDING)', footnoteIds: ['F1', 'F3'] },
+    conversionOrExercisePrice: { value: 50.55, footnoteIds: ['F5'] },
+    transactionDate: { value: '1980-12-25', footnoteIds: [] },
+    transactionCoding: {
+      formType: '5',
+      transactionCode: 'C',
+      equitySwapInvolved: false,
+      footnoteIds: [],
+    },
+    transactionAmounts: {
+      totalValue: { value: 500000, footnoteIds: ['F2'] },
+      pricePerShare: { value: 1001.23, footnoteIds: ['F3'] },
+      acquiredDisposedCode: { value: 'A', footnoteIds: [] },
+    },
+    exerciseDate: { value: '1980-12-25', footnoteIds: [] },
+    expirationDate: { value: '1980-12-25', footnoteIds: ['F4'] },
+    underlyingSecurity: {
+      title: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+      value: { value: 100.12, footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      valueOwnedFollowingTransaction: { value: 3210.88, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.footnotes.length, 5)
+  t.deepEqual(result.footnotes[0], { id: 'F1', note: 'Footnote 1.' })
+
+  t.is(result.remarks, 'This is just a general comment.')
+
+  t.is(result.ownerSignatures.length, 3)
+  t.deepEqual(result.ownerSignatures[0], { name: 'Jane Doe', date: '2002-11-23' })
+})
+
+test('parse form 5/A from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc5a.xml', 'utf8')
+  const result = parseOwnershipForm(file)
+  const endTime = Date.now()
+  t.log('Parsed Form 5/A:', endTime - startTime, 'ms')
+
+  t.is(result.documentType, '5/A')
+  t.is(result.periodOfReport, '2002-09-15')
+  t.is(result.dateOfOriginalSubmission, '2003-03-01')
+  t.true(result.notSubjectToSection16)
+
+  t.deepEqual(result.issuer, { cik: '1212121212', tradingSymbol: 'AWI' })
+
+  t.is(result.reportingOwners.length, 2)
+  t.deepEqual(result.reportingOwners[0], {
+    id: { cik: '0000343434', ccc: 'a#ofc0rn' },
+    address: {
+      street1: '123 Main St',
+      street2: 'Apt #44',
+      city: 'Anywhere',
+      state: 'VA',
+      zipCode: '21212',
+    },
+    relationship: {
+      isDirector: true,
+      isOfficer: true,
+      isTenPercentOwner: false,
+      isOther: true,
+      officerTitle: 'President and CEO',
+      otherText: 'Public Affairs Officer',
+    },
+  })
+
+  t.true(result.aff10B5One)
+
+  t.is(result.nonDerivativeTable.transactions.length, 3)
+  t.deepEqual(result.nonDerivativeTable.transactions[0], {
+    securityTitle: { value: 'Common Stock', footnoteIds: [] },
+    transactionDate: { value: '2003-05-01', footnoteIds: [] },
+    transactionCoding: {
+      formType: '5',
+      transactionCode: 'A',
+      equitySwapInvolved: true,
+      footnoteIds: ['F4', 'F5'],
+    },
+    transactionAmounts: {
+      shares: { value: 2000, footnoteIds: [] },
+      pricePerShare: { value: 120, footnoteIds: [] },
+      acquiredDisposedCode: { value: 'D', footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 22000, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'I', footnoteIds: ['F3'] },
+      natureOfOwnership: { value: 'This describes the nature of the ownership.', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.nonDerivativeTable.holdings.length, 1)
+  t.deepEqual(result.nonDerivativeTable.holdings[0], {
+    securityTitle: { value: 'Preferred Stock Options', footnoteIds: ['F1'] },
+    postTransactionAmounts: {
+      sharesOwnedFollowingTransaction: { value: 33333, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+      natureOfOwnership: { value: '', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.derivativeTable.holdings.length, 1)
+  t.is(result.derivativeTable.transactions.length, 1)
+  t.deepEqual(result.derivativeTable.transactions[0], {
+    securityTitle: { value: 'Derived Stock (HOLDING)', footnoteIds: ['F1', 'F3'] },
+    conversionOrExercisePrice: { value: 50.55, footnoteIds: ['F5'] },
+    transactionDate: { value: '1980-12-25', footnoteIds: [] },
+    transactionCoding: {
+      formType: '5',
+      transactionCode: 'C',
+      equitySwapInvolved: false,
+      footnoteIds: [],
+    },
+    transactionAmounts: {
+      totalValue: { value: 500000, footnoteIds: ['F2'] },
+      pricePerShare: { value: 1001.23, footnoteIds: ['F3'] },
+      acquiredDisposedCode: { value: 'A', footnoteIds: [] },
+    },
+    exerciseDate: { value: '1980-12-25', footnoteIds: [] },
+    expirationDate: { value: '1980-12-25', footnoteIds: ['F4'] },
+    underlyingSecurity: {
+      title: { value: 'Derived Stock (HOLDING)', footnoteIds: [] },
+      value: { value: 100.12, footnoteIds: [] },
+    },
+    postTransactionAmounts: {
+      valueOwnedFollowingTransaction: { value: 3210.88, footnoteIds: [] },
+    },
+    ownershipNature: {
+      directOrIndirectOwnership: { value: 'D', footnoteIds: [] },
+    },
+  })
+
+  t.is(result.footnotes.length, 5)
+  t.deepEqual(result.footnotes[0], { id: 'F1', note: 'Footnote 1.' })
+
+  t.is(result.remarks, 'This is just a general comment.')
+
+  t.is(result.ownerSignatures.length, 3)
+  t.deepEqual(result.ownerSignatures[0], { name: 'Jane Doe', date: '2002-11-23' })
+})
+
+test('parse form 13f-ctr from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc13f-ctr.xml', 'utf8')
+  const result = parseForm13F(file)
+  const endTime = Date.now()
+  t.log('Parsed form 13f-ctr:', endTime - startTime, 'ms')
+
+  const headerData = result.headerData
+  t.deepEqual(headerData, {
+    submissionType: '13F-CTR',
+    filerInfo: {
+      contact: {
+        name: 'qweq',
+        emailAddress: 'qweqw@yahoo.com',
+        phoneNumber: '222-222-2222',
+      },
+      filer: {
+        credentials: { cik: '0123456789', ccc: '********' },
+      },
+      flags: {
+        confirmingCopyFlag: false,
+        overrideInternetFlag: false,
+        returnCopyFlag: false,
+      },
+      liveTestFlag: 'LIVE',
+      periodOfReport: '12-31-2021',
+    },
+  })
+
+  const formData = result.formData
+  t.deepEqual(formData, {
+    coverPage: {
+      reportType: '13F HOLDINGS REPORT',
+      reportCalendarOrQuarter: '12-31-2021',
+      crdNumber: 777777777,
+      secFileNumber: '333-78445',
+      provideInfoForInstruction5: false,
+      filingManager: {
+        name: 'TEST',
+        address: {
+          street1: 'TEST LANE AA EFDFSDF',
+          street2: 'ERY',
+          city: 'L',
+          stateOrCountry: 'CT',
+          zipCode: '22222',
+        },
+      },
+    },
+    signatureBlock: {
+      name: 'werwr',
+      title: 'werer',
+      phone: '222-222-2222',
+      signature: 'dsfsd',
+      city: 'adsd',
+      stateOrCountry: 'AZ',
+      signatureDate: '11-03-2020',
+    },
+    summaryPage: {
+      otherIncludedManagersCount: 0,
+      tableEntryTotal: 111,
+      tableValueTotal: 1111,
+      otherManagers: [],
+    },
+    documents: [],
   })
 })
 
-test('parse form 3 from native', async (t) => {
+test('parse form 13f-ctra from native', async (t) => {
   const startTime = Date.now()
-
-  const file = fs.readFileSync('./__test__/data/form3.xml', 'utf8')
-  const result = parseOwnershipForm(file)
-
+  const file = fs.readFileSync('./__test__/data/doc13f-ctra.xml', 'utf8')
+  const result = parseForm13F(file)
   const endTime = Date.now()
-  console.log('Parsed Form 3:', endTime - startTime, 'ms')
+  t.log('Parsed form 13f-ctr:', endTime - startTime, 'ms')
 
-  t.is(result.schemaVersion, 'X0206')
-  t.is(result.documentType, '3')
-  t.is(result.periodOfReport, '2023-11-29')
-  t.false(result.noSecuritiesOwned)
-
-  t.deepEqual(result.issuer, {
-    cik: '0000789019',
-    name: 'MICROSOFT CORP',
-    tradingSymbol: 'MSFT',
-  })
-
-  t.deepEqual(result.reportingOwner, {
-    id: { cik: '0001899931', name: 'Numoto Takeshi' },
-    address: {
-      street1: 'C/O MICROSOFT CORPORATION',
-      street2: 'ONE MICROSOFT WAY',
-      city: 'REDMOND',
-      state: 'WA',
-      zipCode: '98052-6399',
-    },
-    relationship: {
-      isDirector: false,
-      isOfficer: true,
-      isTenPercentOwner: false,
-      isOther: false,
-      officerTitle: 'EVP, Chief Marketing Officer',
+  const headerData = result.headerData
+  t.deepEqual(headerData, {
+    submissionType: '13F-CTR/A',
+    filerInfo: {
+      contact: {
+        name: 'sdfs',
+        emailAddress: 'sdf@yahoo.com',
+        phoneNumber: '222-222-2222',
+      },
+      filer: {
+        credentials: { cik: '0123456789', ccc: '********' },
+      },
+      flags: {
+        confirmingCopyFlag: false,
+        overrideInternetFlag: false,
+        returnCopyFlag: false,
+      },
+      liveTestFlag: 'LIVE',
+      periodOfReport: '12-31-2021',
+      denovoRequest: true,
     },
   })
 
-  t.is(result.nonDerivativeTable.transactions.length, 0)
-  t.is(result.nonDerivativeTable.holdings.length, 1)
+  const formData = result.formData
+  t.deepEqual(formData, {
+    coverPage: {
+      reportType: '13F HOLDINGS REPORT',
+      reportCalendarOrQuarter: '12-31-2021',
+      crdNumber: 777777777,
+      secFileNumber: '333-785445',
+      isAmendment: true,
+      amendmentNumber: 11,
+      provideInfoForInstruction5: false,
+      filingManager: {
+        name: 'BIG FUND TRUST inc',
+        address: {
+          street1: 'TEST LANE AA EFDFSDF',
+          street2: 'ERY',
+          city: 'L',
+          stateOrCountry: 'CT',
+          zipCode: '22222',
+        },
+      },
+    },
+    signatureBlock: {
+      name: 'dsfsd',
+      title: 'sdff',
+      phone: '222-222-2222',
+      signature: 'sdfs',
+      city: 'fsdf',
+      stateOrCountry: 'AK',
+      signatureDate: '11-09-2021',
+    },
+    summaryPage: {
+      otherIncludedManagersCount: 0,
+      tableEntryTotal: 111,
+      tableValueTotal: 111,
+      otherManagers: [],
+    },
+    documents: [],
+  })
+})
 
-  t.is(result.footnotes.length, 1)
-  t.deepEqual(result.footnotes[0], {
-    id: 'F1',
-    note: 'Includes an aggregate of 30,746 shares represented by stock awards that vest, subject to continued employment, as follows: 935 shares on 11/30/2023; 4,394 shares on 2/29/2024; 532 shares on 5/30/2024; 403 shares on 5/31/2024; 533 shares on 8/30/2024; 6,570 shares on 8/31/2024; 403 shares on 11/30/2024; 4,245 shares on 2/28/2025; 403 shares on 5/31/2025; 4,246 shares on 8/31/2025; 2,687 shares on 2/28/2026; 2,687 shares on 8/31/2026; 1,354 shares on 2/28/2027; 1,354 shares on 8/31/2027.',
+test('parse form 13f-hr from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc13f-hr.xml', 'utf8')
+  const result = parseForm13F(file)
+  const endTime = Date.now()
+  t.log('Parsed form 13f-hr:', endTime - startTime, 'ms')
+
+  const headerData = result.headerData
+  t.deepEqual(headerData, {
+    submissionType: '13F-HR',
+    filerInfo: {
+      liveTestFlag: 'LIVE',
+      flags: {
+        confirmingCopyFlag: false,
+        returnCopyFlag: false,
+        overrideInternetFlag: false,
+      },
+      filer: {
+        credentials: {
+          cik: '0123456789',
+          ccc: '********',
+        },
+      },
+      contact: {
+        name: 'SDAD',
+        emailAddress: 'ASDA@yahoo.com',
+        phoneNumber: '222-222-2222',
+      },
+      periodOfReport: '12-31-2021',
+    },
   })
 
-  t.deepEqual(result.ownerSignature, {
-    name: 'Ann Habernigg, Attorney-in-Fact for Takeshi Numoto',
-    date: '2023-12-01',
+  const formData = result.formData
+  t.deepEqual(formData, {
+    coverPage: {
+      reportCalendarOrQuarter: '12-31-2021',
+      filingManager: {
+        name: 'BIG FUND TRUST inc',
+        address: {
+          street1: 'TEST LANE AA EFDFSDF',
+          street2: 'ERY',
+          city: 'L',
+          stateOrCountry: 'CT',
+          zipCode: '22222',
+        },
+      },
+      reportType: '13F HOLDINGS REPORT',
+      crdNumber: 777777777,
+      secFileNumber: '333-78545',
+      provideInfoForInstruction5: false,
+    },
+    signatureBlock: {
+      name: 'eqwqwe',
+      title: 'asdsad',
+      phone: '222-222-2222',
+      signature: 'asdasd',
+      city: 'asdd',
+      stateOrCountry: 'AZ',
+      signatureDate: '11-02-2021',
+    },
+    summaryPage: {
+      otherIncludedManagersCount: 0,
+      tableEntryTotal: 111,
+      tableValueTotal: 111,
+      isConfidentialOmitted: false,
+      otherManagers: [],
+    },
+    documents: [],
+  })
+})
+
+test('parse form 13f-hra from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc13f-hra.xml', 'utf8')
+  const result = parseForm13F(file)
+  const endTime = Date.now()
+  t.log('Parsed form 13f-hra:', endTime - startTime, 'ms')
+
+  const headerData = result.headerData
+  t.deepEqual(headerData, {
+    submissionType: '13F-HR/A',
+    filerInfo: {
+      liveTestFlag: 'LIVE',
+      flags: {
+        confirmingCopyFlag: false,
+        returnCopyFlag: false,
+        overrideInternetFlag: false,
+      },
+      filer: {
+        credentials: {
+          cik: '0123456789',
+          ccc: '********',
+        },
+      },
+      contact: {
+        name: 'asdsa',
+        emailAddress: 'sds@yahoo.com',
+        phoneNumber: '222-788-7777',
+      },
+      periodOfReport: '12-31-2021',
+    },
+  })
+
+  const formData = result.formData
+  t.deepEqual(formData, {
+    coverPage: {
+      reportCalendarOrQuarter: '12-31-2021',
+      isAmendment: true,
+      amendmentNumber: 45,
+      amendmentInfo: {
+        amendmentType: 'RESTATEMENT',
+      },
+      filingManager: {
+        name: 'BIG FUND TRUST inc',
+        address: {
+          street1: 'TEST LANE AA EFDFSDF',
+          street2: 'ERY',
+          city: 'L',
+          stateOrCountry: 'CT',
+          zipCode: '22222',
+        },
+      },
+      reportType: '13F HOLDINGS REPORT',
+      crdNumber: 777777777,
+      secFileNumber: '333-78548',
+      provideInfoForInstruction5: false,
+    },
+    signatureBlock: {
+      name: 'dewrwe',
+      title: 'werwerwe',
+      phone: '22-785-77884',
+      signature: 'dfsdf',
+      city: 'sdfsdf',
+      stateOrCountry: 'GA',
+      signatureDate: '11-01-2021',
+    },
+    summaryPage: {
+      otherIncludedManagersCount: 0,
+      tableEntryTotal: 1222,
+      tableValueTotal: 1122,
+      isConfidentialOmitted: false,
+      otherManagers: [],
+    },
+    documents: [],
+  })
+})
+
+test('parse form 13f-nt from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc13f-nt.xml', 'utf8')
+  const result = parseForm13F(file)
+  const endTime = Date.now()
+  t.log('Parsed form 13f-nt:', endTime - startTime, 'ms')
+
+  const headerData = result.headerData
+  t.deepEqual(headerData, {
+    submissionType: '13F-NT',
+    filerInfo: {
+      liveTestFlag: 'LIVE',
+      flags: {
+        confirmingCopyFlag: false,
+        returnCopyFlag: false,
+        overrideInternetFlag: false,
+      },
+      filer: {
+        credentials: {
+          cik: '0123456789',
+          ccc: '********',
+        },
+      },
+      contact: {
+        name: 'asdad',
+        emailAddress: 'asdad@yahoo.com',
+        phoneNumber: '222-222-2222',
+      },
+      periodOfReport: '12-31-2021',
+    },
+  })
+
+  const formData = result.formData
+  t.deepEqual(formData, {
+    coverPage: {
+      reportCalendarOrQuarter: '12-31-2021',
+      filingManager: {
+        name: 'BIG FUND TRUST inc',
+        address: {
+          street1: 'TEST LANE AA EFDFSDF',
+          street2: 'ERY',
+          city: 'L',
+          stateOrCountry: 'CT',
+          zipCode: '22222',
+        },
+      },
+      reportType: '13F NOTICE',
+      crdNumber: 777777777,
+      secFileNumber: '333-77777',
+      otherManagersInfo: {
+        otherManager: {
+          name: 'BIG FUND TRUST inc',
+          cik: '0123456789',
+          form13FFileNumber: '028-7844',
+          crdNumber: 785474547,
+          secFileNumber: '333-78547',
+        },
+      },
+      provideInfoForInstruction5: false,
+    },
+    signatureBlock: {
+      name: 'sdfs',
+      title: 'sdf',
+      phone: '222-222-2222',
+      signature: 'fdd',
+      city: 'fd',
+      stateOrCountry: 'AK',
+      signatureDate: '11-01-2021',
+    },
+    documents: [],
+  })
+})
+
+test('parse form 13f-nt/a from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc13f-nta.xml', 'utf8')
+  const result = parseForm13F(file)
+  const endTime = Date.now()
+  t.log('Parsed form 13f-nt/a:', endTime - startTime, 'ms')
+
+  const headerData = result.headerData
+  t.deepEqual(headerData, {
+    submissionType: '13F-NT/A',
+    filerInfo: {
+      liveTestFlag: 'LIVE',
+      flags: {
+        confirmingCopyFlag: false,
+        returnCopyFlag: false,
+        overrideInternetFlag: false,
+      },
+      filer: {
+        credentials: {
+          cik: '0123456789',
+          ccc: '********',
+        },
+      },
+      contact: {
+        name: 'erere',
+        emailAddress: 'sdfsdf@yahoo.com',
+        phoneNumber: '222-222-2222',
+      },
+      periodOfReport: '12-31-2021',
+    },
+  })
+
+  const formData = result.formData
+  t.deepEqual(formData, {
+    coverPage: {
+      reportCalendarOrQuarter: '12-31-2021',
+      isAmendment: true,
+      amendmentNumber: 12,
+      filingManager: {
+        name: 'BIG FUND TRUST inc',
+        address: {
+          street1: 'TEST LANE AA EFDFSDF',
+          street2: 'ERY',
+          city: 'L',
+          stateOrCountry: 'CT',
+          zipCode: '22222',
+        },
+      },
+      reportType: '13F NOTICE',
+      crdNumber: 777777777,
+      secFileNumber: '333-78545',
+      otherManagersInfo: {
+        otherManager: {
+          cik: '0123456789',
+          crdNumber: 777777777,
+          form13FFileNumber: '028-54444',
+          name: 'BIG FUND TRUST inc',
+          secFileNumber: '333-78544',
+        },
+      },
+      provideInfoForInstruction5: false,
+    },
+    signatureBlock: {
+      name: 'fdgdf',
+      title: 'dfgdf',
+      phone: '222-222-2222',
+      signature: 'sdff',
+      city: 'sdfsdf',
+      stateOrCountry: 'AR',
+      signatureDate: '11-09-2021',
+    },
+    documents: [],
+  })
+})
+
+test('parse form 13f-table from native', async (t) => {
+  const startTime = Date.now()
+  const file = fs.readFileSync('./__test__/data/doc13f-table.xml', 'utf8')
+  const result = parseForm13FTable(file)
+  const endTime = Date.now()
+  t.log('Parsed form 13f-table:', endTime - startTime, 'ms')
+
+  t.is(result.entries.length, 169)
+
+  const entry = result.entries[0]
+  t.deepEqual(entry, {
+    nameOfIssuer: 'AT&T INC',
+    titleOfClass: 'COM',
+    cusip: '02079K107',
+    figi: '02079K107743',
+    value: 7454547777,
+    sharesOrPrintAmount: {
+      amount: 79296,
+      sharesOrPrintType: 'SH',
+    },
+    investmentDiscretion: 'SOLE',
+    votingAuthority: {
+      sole: 0,
+      shared: 0,
+      none: 79296,
+    },
+    otherManager: [],
   })
 })

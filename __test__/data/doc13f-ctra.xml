@@ -1,0 +1,61 @@
+<?xml version="1.0" ?><edgarSubmission xmlns="http://www.sec.gov/edgar/thirteenffiler" xmlns:com="http://www.sec.gov/edgar/common">
+  <headerData>
+    <submissionType>13F-CTR/A</submissionType>
+    <filerInfo>
+      <liveTestFlag>LIVE</liveTestFlag>
+	   <denovoRequest>Y</denovoRequest>
+      <flags>
+        <confirmingCopyFlag>false</confirmingCopyFlag>
+        <returnCopyFlag>false</returnCopyFlag>
+        <overrideInternetFlag>false</overrideInternetFlag>
+      </flags>
+      <filer>
+        <credentials>
+          <cik>0123456789</cik>
+          <ccc>********</ccc>
+        </credentials>
+      </filer>
+      <contact>
+        <contactName>sdfs</contactName>
+        <contactPhoneNumber>222-222-2222</contactPhoneNumber>
+        <contactEmailAddress>sdf@yahoo.com</contactEmailAddress>
+      </contact>
+      <periodOfReport>12-31-2021</periodOfReport>
+    </filerInfo>
+  </headerData>
+  <formData>
+    <coverPage>
+      <reportCalendarOrQuarter>12-31-2021</reportCalendarOrQuarter>
+      <isAmendment>true</isAmendment>
+      <amendmentNo>11</amendmentNo>
+      <filingManager>
+        <name>BIG FUND TRUST inc</name>
+        <address>
+          <com:street1>TEST LANE AA EFDFSDF</com:street1>
+          <com:street2>ERY</com:street2>
+          <com:city>L</com:city>
+          <com:stateOrCountry>CT</com:stateOrCountry>
+          <com:zipCode>22222</com:zipCode>
+        </address>
+      </filingManager>
+      <reportType>13F HOLDINGS REPORT</reportType>
+      <crdNumber>777777777</crdNumber>
+      <secFileNumber>333-785445</secFileNumber>
+      <provideInfoForInstruction5>N</provideInfoForInstruction5>
+    </coverPage>
+    <signatureBlock>
+      <name>dsfsd</name>
+      <title>sdff</title>
+      <phone>222-222-2222</phone>
+      <signature>sdfs</signature>
+      <city>fsdf</city>
+      <stateOrCountry>AK</stateOrCountry>
+      <signatureDate>11-09-2021</signatureDate>
+    </signatureBlock>
+    <summaryPage>
+      <otherIncludedManagersCount>0</otherIncludedManagersCount>
+      <tableEntryTotal>111</tableEntryTotal>
+      <tableValueTotal>111</tableValueTotal>
+    </summaryPage>
+  </formData>
+</edgarSubmission>

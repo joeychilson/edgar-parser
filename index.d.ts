@@ -19,6 +19,7 @@ export interface FilerInfo {
   contact?: Contact
   notifications?: Notifications
   periodOfReport: string
+  denovoRequest?: boolean
 }
 export interface Flags {
   confirmingCopyFlag?: boolean
@@ -45,7 +46,7 @@ export interface FormData {
   coverPage: CoverPage
   signatureBlock: SignatureBlock
   summaryPage?: SummaryPage
-  documents: Array<OtherDocument>
+  documents?: Array<OtherDocument>
 }
 export interface CoverPage {
   reportCalendarOrQuarter: string
@@ -55,7 +56,9 @@ export interface CoverPage {
   filingManager: FilingManager
   reportType: string
   form13FFileNumber?: string
-  otherManagerInfo?: OtherManagerInfo
+  crdNumber?: number
+  secFileNumber?: string
+  otherManagersInfo?: OtherManagersInfo
   provideInfoForInstruction5: boolean
   additionalInformation?: string
 }
@@ -77,13 +80,15 @@ export interface Address {
   stateOrCountry: string
   zipCode: string
 }
-export interface OtherManagerInfo {
+export interface OtherManagersInfo {
   otherManager?: OtherManager
 }
 export interface OtherManager {
   cik?: string
   name?: string
   form13FFileNumber?: string
+  crdNumber?: number
+  secFileNumber?: string
 }
 export interface SignatureBlock {
   name: string
@@ -123,7 +128,7 @@ export interface TableEntry {
   sharesOrPrintAmount: SharesOrPrintAmount
   putCall?: string
   investmentDiscretion: string
-  otherManager: Array<number>
+  otherManager?: Array<number>
   votingAuthority: VotingAuthority
 }
 export interface SharesOrPrintAmount {
@@ -147,13 +152,13 @@ export interface OwnershipForm {
   form3HoldingsReported?: boolean
   form4TransactionsReported?: boolean
   issuer: Issuer
-  reportingOwner: ReportingOwner
+  reportingOwners: Array<ReportingOwner>
   aff10B5One?: boolean
   nonDerivativeTable?: NonDerivativeTable
   derivativeTable?: DerivativeTable
   footnotes: Array<Footnote>
   remarks?: string
-  ownerSignature: OwnerSignature
+  ownerSignatures: Array<OwnerSignature>
 }
 export interface Issuer {
   cik: string
@@ -195,40 +200,41 @@ export interface DerivativeTable {
   holdings: Array<DerivativeHolding>
 }
 export interface NonDerivativeTransaction {
-  securityTitle?: ValueFootnote
-  transactionDate?: ValueFootnote
-  deemedExecutionDate?: ValueFootnote
+  securityTitle?: ValueFootnotes
+  transactionDate?: ValueFootnotes
+  deemedExecutionDate?: ValueFootnotes
   transactionCoding?: TransactionCoding
-  transactionTimeliness?: ValueFootnote
+  transactionTimeliness?: ValueFootnotes
   transactionAmounts?: TransactionAmounts
   postTransactionAmounts?: PostTransactionAmounts
   ownershipNature?: OwnershipNature
 }
 export interface DerivativeTransaction {
-  securityTitle?: ValueFootnote
-  conversionOrExercisePrice?: ValueFootnote
-  deemedExecutionDate?: ValueFootnote
+  securityTitle?: ValueFootnotes
+  conversionOrExercisePrice?: ValueFootnotes
+  deemedExecutionDate?: ValueFootnotes
+  transactionDate?: ValueFootnotes
   transactionCoding?: TransactionCoding
-  transactionTimeliness?: ValueFootnote
+  transactionTimeliness?: ValueFootnotes
   transactionAmounts?: DerivativeTransactionAmounts
-  exerciseDate?: ValueFootnote
-  expirationDate?: ValueFootnote
+  exerciseDate?: ValueFootnotes
+  expirationDate?: ValueFootnotes
   underlyingSecurity?: UnderlyingSecurity
   postTransactionAmounts?: PostTransactionAmounts
   ownershipNature?: OwnershipNature
 }
 export interface NonDerivativeHolding {
-  securityTitle?: ValueFootnote
+  securityTitle?: ValueFootnotes
   transactionCoding?: HoldingCoding
   postTransactionAmounts?: PostTransactionAmounts
   ownershipNature?: OwnershipNature
 }
 export interface DerivativeHolding {
-  securityTitle?: ValueFootnote
-  conversionOrExercisePrice?: ValueFootnote
+  securityTitle?: ValueFootnotes
+  conversionOrExercisePrice?: ValueFootnotes
   transactionCoding?: HoldingCoding
-  exerciseDate?: ValueFootnote
-  expirationDate?: ValueFootnote
+  exerciseDate?: ValueFootnotes
+  expirationDate?: ValueFootnotes
   underlyingSecurity?: UnderlyingSecurity
   postTransactionAmounts?: PostTransactionAmounts
   ownershipNature?: OwnershipNature
@@ -237,35 +243,35 @@ export interface TransactionCoding {
   formType?: string
   transactionCode?: string
   equitySwapInvolved?: boolean
-  footnoteId?: string
+  footnoteIds?: Array<string>
 }
 export interface HoldingCoding {
   formType?: string
-  footnoteId?: string
+  footnoteIds?: Array<string>
 }
 export interface TransactionAmounts {
-  shares?: ValueFootnote
-  pricePerShare?: ValueFootnote
-  acquiredDisposedCode?: ValueFootnote
+  shares?: ValueFootnotes
+  pricePerShare?: ValueFootnotes
+  acquiredDisposedCode?: ValueFootnotes
 }
 export interface DerivativeTransactionAmounts {
-  shares?: ValueFootnote
-  pricePerShare?: ValueFootnote
-  totalValue?: ValueFootnote
-  acquiredDisposedCode?: ValueFootnote
+  shares?: ValueFootnotes
+  pricePerShare?: ValueFootnotes
+  totalValue?: ValueFootnotes
+  acquiredDisposedCode?: ValueFootnotes
 }
 export interface UnderlyingSecurity {
-  title?: ValueFootnote
-  shares?: ValueFootnote
-  value?: ValueFootnote
+  title?: ValueFootnotes
+  shares?: ValueFootnotes
+  value?: ValueFootnotes
 }
 export interface PostTransactionAmounts {
-  sharesOwnedFollowingTransaction?: ValueFootnote
-  valueOwnedFollowingTransaction?: ValueFootnote
+  sharesOwnedFollowingTransaction?: ValueFootnotes
+  valueOwnedFollowingTransaction?: ValueFootnotes
 }
 export interface OwnershipNature {
-  directOrIndirectOwnership?: ValueFootnote
-  natureOfOwnership?: ValueFootnote
+  directOrIndirectOwnership?: ValueFootnotes
+  natureOfOwnership?: ValueFootnotes
 }
 export interface Footnote {
   id?: string
@@ -275,9 +281,9 @@ export interface OwnerSignature {
   name: string
   date: string
 }
-export interface ValueFootnote {
+export interface ValueFootnotes {
   value?: unknown
-  footnoteId?: string
+  footnoteIds?: Array<string>
 }
 export function parseOwnershipForm(form: string): OwnershipForm
 export interface Xbrl {

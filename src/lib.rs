@@ -9,7 +9,8 @@ fn parse_date(node: &Node, tag: &str) -> Option<String> {
   node
     .children()
     .find(|n| n.has_tag_name(tag))
-    .and_then(|n| n.text().map(str::to_owned))
+    .and_then(|n| n.text())
+    .map(ToString::to_string)
 }
 
 fn parse_ints(node: &Node, tag: &str) -> Vec<i32> {
@@ -17,31 +18,10 @@ fn parse_ints(node: &Node, tag: &str) -> Vec<i32> {
     .children()
     .filter(|node| node.has_tag_name(tag))
     .filter_map(|node| node.text())
-    .flat_map(|text| text.split(',').filter_map(|s| s.trim().parse::<i32>().ok()))
+    .flat_map(|text| text.split(','))
+    .filter_map(|s| s.trim().parse().ok())
     .collect()
 }
-
-fn parse_string<T: ParseFromString>(node: &Node, tag: &str) -> Option<T::Output> {
-  node
-    .children()
-    .find(|node| node.has_tag_name(tag))
-    .and_then(|node| node.text())
-    .and_then(|text| T::parse(text).ok())
-}
-
-fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
-  let str = value_str.trim();
-  if let Ok(value) = str.parse::<bool>() {
-    env.get_boolean(value).map(|v| v.into_unknown())
-  } else if let Ok(value) = str.parse::<i64>() {
-    env.create_int64(value).map(|v| v.into_unknown())
-  } else if let Ok(value) = str.parse::<f64>() {
-    env.create_double(value).map(|v| v.into_unknown())
-  } else {
-    env.create_string(str).map(|v| v.into_unknown())
-  }
-}
-
 trait ParseFromString {
   type Output;
   fn parse(s: &str) -> Result<Self::Output, String>;
@@ -82,5 +62,26 @@ impl ParseFromString for bool {
       "0" | "N" | "FALSE" => Ok(false),
       _ => Err(format!("failed to parse bool from: {}", s)),
     }
+  }
+}
+
+fn parse_string<T: ParseFromString>(node: &Node, tag: &str) -> Option<T::Output> {
+  node
+    .children()
+    .find(|node| node.has_tag_name(tag))
+    .and_then(|node| node.text())
+    .and_then(|text| T::parse(text).ok())
+}
+
+fn parse_value(env: Env, value_str: &str) -> napi::Result<JsUnknown> {
+  let str = value_str.trim();
+  if let Ok(value) = str.parse::<bool>() {
+    env.get_boolean(value).map(|v| v.into_unknown())
+  } else if let Ok(value) = str.parse::<i64>() {
+    env.create_int64(value).map(|v| v.into_unknown())
+  } else if let Ok(value) = str.parse::<f64>() {
+    env.create_double(value).map(|v| v.into_unknown())
+  } else {
+    env.create_string(str).map(|v| v.into_unknown())
   }
 }

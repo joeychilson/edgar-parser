@@ -17,13 +17,13 @@ pub struct OwnershipForm {
   pub form3_holdings_reported: Option<bool>,
   pub form4_transactions_reported: Option<bool>,
   pub issuer: Issuer,
-  pub reporting_owner: ReportingOwner,
+  pub reporting_owners: Vec<ReportingOwner>,
   pub aff10b5_one: Option<bool>,
   pub non_derivative_table: Option<NonDerivativeTable>,
   pub derivative_table: Option<DerivativeTable>,
   pub footnotes: Vec<Footnote>,
   pub remarks: Option<String>,
-  pub owner_signature: OwnerSignature,
+  pub owner_signatures: Vec<OwnerSignature>,
 }
 
 #[napi(object)]
@@ -81,11 +81,11 @@ pub struct DerivativeTable {
 
 #[napi(object)]
 pub struct NonDerivativeTransaction {
-  pub security_title: Option<ValueFootnote>,
-  pub transaction_date: Option<ValueFootnote>,
-  pub deemed_execution_date: Option<ValueFootnote>,
+  pub security_title: Option<ValueFootnotes>,
+  pub transaction_date: Option<ValueFootnotes>,
+  pub deemed_execution_date: Option<ValueFootnotes>,
   pub transaction_coding: Option<TransactionCoding>,
-  pub transaction_timeliness: Option<ValueFootnote>,
+  pub transaction_timeliness: Option<ValueFootnotes>,
   pub transaction_amounts: Option<TransactionAmounts>,
   pub post_transaction_amounts: Option<PostTransactionAmounts>,
   pub ownership_nature: Option<OwnershipNature>,
@@ -93,14 +93,15 @@ pub struct NonDerivativeTransaction {
 
 #[napi(object)]
 pub struct DerivativeTransaction {
-  pub security_title: Option<ValueFootnote>,
-  pub conversion_or_exercise_price: Option<ValueFootnote>,
-  pub deemed_execution_date: Option<ValueFootnote>,
+  pub security_title: Option<ValueFootnotes>,
+  pub conversion_or_exercise_price: Option<ValueFootnotes>,
+  pub deemed_execution_date: Option<ValueFootnotes>,
+  pub transaction_date: Option<ValueFootnotes>,
   pub transaction_coding: Option<TransactionCoding>,
-  pub transaction_timeliness: Option<ValueFootnote>,
+  pub transaction_timeliness: Option<ValueFootnotes>,
   pub transaction_amounts: Option<DerivativeTransactionAmounts>,
-  pub exercise_date: Option<ValueFootnote>,
-  pub expiration_date: Option<ValueFootnote>,
+  pub exercise_date: Option<ValueFootnotes>,
+  pub expiration_date: Option<ValueFootnotes>,
   pub underlying_security: Option<UnderlyingSecurity>,
   pub post_transaction_amounts: Option<PostTransactionAmounts>,
   pub ownership_nature: Option<OwnershipNature>,
@@ -108,7 +109,7 @@ pub struct DerivativeTransaction {
 
 #[napi(object)]
 pub struct NonDerivativeHolding {
-  pub security_title: Option<ValueFootnote>,
+  pub security_title: Option<ValueFootnotes>,
   pub transaction_coding: Option<HoldingCoding>,
   pub post_transaction_amounts: Option<PostTransactionAmounts>,
   pub ownership_nature: Option<OwnershipNature>,
@@ -116,11 +117,11 @@ pub struct NonDerivativeHolding {
 
 #[napi(object)]
 pub struct DerivativeHolding {
-  pub security_title: Option<ValueFootnote>,
-  pub conversion_or_exercise_price: Option<ValueFootnote>,
+  pub security_title: Option<ValueFootnotes>,
+  pub conversion_or_exercise_price: Option<ValueFootnotes>,
   pub transaction_coding: Option<HoldingCoding>,
-  pub exercise_date: Option<ValueFootnote>,
-  pub expiration_date: Option<ValueFootnote>,
+  pub exercise_date: Option<ValueFootnotes>,
+  pub expiration_date: Option<ValueFootnotes>,
   pub underlying_security: Option<UnderlyingSecurity>,
   pub post_transaction_amounts: Option<PostTransactionAmounts>,
   pub ownership_nature: Option<OwnershipNature>,
@@ -131,47 +132,47 @@ pub struct TransactionCoding {
   pub form_type: Option<String>,
   pub transaction_code: Option<String>,
   pub equity_swap_involved: Option<bool>,
-  pub footnote_id: Option<String>,
+  pub footnote_ids: Option<Vec<String>>,
 }
 
 #[napi(object)]
 pub struct HoldingCoding {
   pub form_type: Option<String>,
-  pub footnote_id: Option<String>,
+  pub footnote_ids: Option<Vec<String>>,
 }
 
 #[napi(object)]
 pub struct TransactionAmounts {
-  pub shares: Option<ValueFootnote>,
-  pub price_per_share: Option<ValueFootnote>,
-  pub acquired_disposed_code: Option<ValueFootnote>,
+  pub shares: Option<ValueFootnotes>,
+  pub price_per_share: Option<ValueFootnotes>,
+  pub acquired_disposed_code: Option<ValueFootnotes>,
 }
 
 #[napi(object)]
 pub struct DerivativeTransactionAmounts {
-  pub shares: Option<ValueFootnote>,
-  pub price_per_share: Option<ValueFootnote>,
-  pub total_value: Option<ValueFootnote>,
-  pub acquired_disposed_code: Option<ValueFootnote>,
+  pub shares: Option<ValueFootnotes>,
+  pub price_per_share: Option<ValueFootnotes>,
+  pub total_value: Option<ValueFootnotes>,
+  pub acquired_disposed_code: Option<ValueFootnotes>,
 }
 
 #[napi(object)]
 pub struct UnderlyingSecurity {
-  pub title: Option<ValueFootnote>,
-  pub shares: Option<ValueFootnote>,
-  pub value: Option<ValueFootnote>,
+  pub title: Option<ValueFootnotes>,
+  pub shares: Option<ValueFootnotes>,
+  pub value: Option<ValueFootnotes>,
 }
 
 #[napi(object)]
 pub struct PostTransactionAmounts {
-  pub shares_owned_following_transaction: Option<ValueFootnote>,
-  pub value_owned_following_transaction: Option<ValueFootnote>,
+  pub shares_owned_following_transaction: Option<ValueFootnotes>,
+  pub value_owned_following_transaction: Option<ValueFootnotes>,
 }
 
 #[napi(object)]
 pub struct OwnershipNature {
-  pub direct_or_indirect_ownership: Option<ValueFootnote>,
-  pub nature_of_ownership: Option<ValueFootnote>,
+  pub direct_or_indirect_ownership: Option<ValueFootnotes>,
+  pub nature_of_ownership: Option<ValueFootnotes>,
 }
 
 #[napi(object)]
@@ -187,9 +188,9 @@ pub struct OwnerSignature {
 }
 
 #[napi(object)]
-pub struct ValueFootnote {
+pub struct ValueFootnotes {
   pub value: Option<JsUnknown>,
-  pub footnote_id: Option<String>,
+  pub footnote_ids: Option<Vec<String>>,
 }
 
 #[napi]
@@ -210,13 +211,13 @@ pub fn parse_ownership_form(env: Env, form: String) -> Result<OwnershipForm, Err
   let form4_transactions_reported = parse_string::<bool>(&root_node, "form4TransactionsReported");
   let aff10b5_one = parse_string::<bool>(&root_node, "aff10b5One");
   let issuer = parse_issuer(&root_node).map_err(Error::from_reason)?;
-  let reporting_owner = parse_reporting_owner(&root_node).map_err(Error::from_reason)?;
+  let reporting_owners = parse_reporting_owners(&root_node).map_err(Error::from_reason)?;
   let non_derivative_table =
     parse_non_derivative_table(env, &root_node).map_err(Error::from_reason)?;
   let derivative_table = parse_derivative_table(env, &root_node).map_err(Error::from_reason)?;
   let footnotes = parse_footnotes(&root_node).map_err(Error::from_reason)?;
   let remarks = parse_string::<String>(&root_node, "remarks");
-  let owner_signature = parse_owner_signature(&root_node).map_err(Error::from_reason)?;
+  let owner_signatures = parse_owner_signatures(&root_node).map_err(Error::from_reason)?;
 
   Ok(OwnershipForm {
     schema_version,
@@ -228,13 +229,13 @@ pub fn parse_ownership_form(env: Env, form: String) -> Result<OwnershipForm, Err
     form3_holdings_reported,
     form4_transactions_reported,
     issuer,
-    reporting_owner,
+    reporting_owners,
     aff10b5_one,
     non_derivative_table,
     derivative_table,
     footnotes,
     remarks,
-    owner_signature,
+    owner_signatures,
   })
 }
 
@@ -258,12 +259,11 @@ fn parse_issuer(node: &Node) -> Result<Issuer, String> {
     })
 }
 
-fn parse_reporting_owner(node: &Node) -> Result<ReportingOwner, String> {
-  node
+fn parse_reporting_owners(node: &Node) -> Result<Vec<ReportingOwner>, String> {
+  let owners = node
     .children()
-    .find(|node| node.has_tag_name("reportingOwner"))
-    .ok_or("reportingOwner not found".to_string())
-    .and_then(|owner_node| {
+    .filter(|node| node.has_tag_name("reportingOwner"))
+    .map(|owner_node| {
       let id = parse_reporting_owner_id(&owner_node)?;
       let address = parse_reporting_owner_address(&owner_node)?;
       let relationship = parse_reporting_owner_relationship(&owner_node)?;
@@ -274,6 +274,13 @@ fn parse_reporting_owner(node: &Node) -> Result<ReportingOwner, String> {
         relationship,
       })
     })
+    .collect::<Result<Vec<ReportingOwner>, String>>();
+
+  if owners.as_ref().map_or(true, |v| v.is_empty()) {
+    Err("reportingOwner not found".to_string())
+  } else {
+    owners
+  }
 }
 
 fn parse_reporting_owner_id(node: &Node) -> Result<ReportingOwnerID, String> {
@@ -381,10 +388,12 @@ fn parse_non_derivative_transactions(
     .children()
     .filter(|node| node.has_tag_name("nonDerivativeTransaction"))
     .filter_map(|transaction_node| {
-      let security_title = get_value_footnote(env, &transaction_node, "securityTitle");
-      let transaction_date = get_value_footnote(env, &transaction_node, "transactionDate");
-      let deemed_execution_date = get_value_footnote(env, &transaction_node, "deemedExecutionDate");
-      let transaction_timeliness = get_value_footnote(env, &transaction_node, "transactionCoding");
+      let security_title = get_value_footnotes(env, &transaction_node, "securityTitle");
+      let transaction_date = get_value_footnotes(env, &transaction_node, "transactionDate");
+      let deemed_execution_date =
+        get_value_footnotes(env, &transaction_node, "deemedExecutionDate");
+      let transaction_timeliness =
+        get_value_footnotes(env, &transaction_node, "transactionTimeliness");
       let transaction_coding = parse_transaction_coding(&transaction_node).ok()?;
       let transaction_amounts = parse_transaction_amounts(env, &transaction_node).ok()?;
       let post_transaction_amounts = parse_post_transaction_amounts(env, &transaction_node).ok()?;
@@ -402,6 +411,7 @@ fn parse_non_derivative_transactions(
       })
     })
     .collect();
+
   Ok(transactions)
 }
 
@@ -413,17 +423,19 @@ fn parse_derivative_transactions(
     .children()
     .filter(|node| node.has_tag_name("derivativeTransaction"))
     .filter_map(|transaction_node| {
-      let security_title = get_value_footnote(env, &transaction_node, "securityTitle");
+      let security_title = get_value_footnotes(env, &transaction_node, "securityTitle");
       let conversion_or_exercise_price =
-        get_value_footnote(env, &transaction_node, "conversionOrExercisePrice");
-      let deemed_execution_date = get_value_footnote(env, &transaction_node, "deemedExecutionDate");
+        get_value_footnotes(env, &transaction_node, "conversionOrExercisePrice");
+      let transaction_date = get_value_footnotes(env, &transaction_node, "transactionDate");
+      let deemed_execution_date =
+        get_value_footnotes(env, &transaction_node, "deemedExecutionDate");
       let transaction_coding = parse_transaction_coding(&transaction_node).ok()?;
       let transaction_timeliness =
-        get_value_footnote(env, &transaction_node, "transactionTimeliness");
+        get_value_footnotes(env, &transaction_node, "transactionTimeliness");
       let transaction_amounts =
         parse_derivative_transaction_amounts(env, &transaction_node).ok()?;
-      let exercise_date = get_value_footnote(env, &transaction_node, "exerciseDate");
-      let expiration_date = get_value_footnote(env, &transaction_node, "expirationDate");
+      let exercise_date = get_value_footnotes(env, &transaction_node, "exerciseDate");
+      let expiration_date = get_value_footnotes(env, &transaction_node, "expirationDate");
       let underlying_security = parse_underlying_security(env, &transaction_node).ok()?;
       let post_transaction_amounts = parse_post_transaction_amounts(env, &transaction_node).ok()?;
       let ownership_nature = parse_ownership_nature(env, &transaction_node).ok()?;
@@ -432,6 +444,7 @@ fn parse_derivative_transactions(
         security_title,
         conversion_or_exercise_price,
         deemed_execution_date,
+        transaction_date,
         transaction_coding,
         transaction_timeliness,
         transaction_amounts,
@@ -443,6 +456,7 @@ fn parse_derivative_transactions(
       })
     })
     .collect();
+
   Ok(transactions)
 }
 
@@ -454,7 +468,7 @@ fn parse_non_derivative_holdings(
     .children()
     .filter(|node| node.has_tag_name("nonDerivativeHolding"))
     .filter_map(|holdings_node| {
-      let security_title = get_value_footnote(env, &holdings_node, "securityTitle");
+      let security_title = get_value_footnotes(env, &holdings_node, "securityTitle");
       let transaction_coding = parse_holding_coding(&holdings_node).ok()?;
       let post_transaction_amounts = parse_post_transaction_amounts(env, &holdings_node).ok()?;
       let ownership_nature = parse_ownership_nature(env, &holdings_node).ok()?;
@@ -467,6 +481,7 @@ fn parse_non_derivative_holdings(
       })
     })
     .collect();
+
   Ok(holdings)
 }
 
@@ -475,12 +490,12 @@ fn parse_derivative_holdings(env: Env, node: &Node) -> Result<Vec<DerivativeHold
     .children()
     .filter(|node| node.has_tag_name("derivativeHolding"))
     .filter_map(|holdings_node| {
-      let security_title = get_value_footnote(env, &holdings_node, "securityTitle");
+      let security_title = get_value_footnotes(env, &holdings_node, "securityTitle");
       let conversion_or_exercise_price =
-        get_value_footnote(env, &holdings_node, "conversionOrExercisePrice");
+        get_value_footnotes(env, &holdings_node, "conversionOrExercisePrice");
       let transaction_coding = parse_holding_coding(&holdings_node).ok()?;
-      let exercise_date = get_value_footnote(env, &holdings_node, "exerciseDate");
-      let expiration_date = get_value_footnote(env, &holdings_node, "expirationDate");
+      let exercise_date = get_value_footnotes(env, &holdings_node, "exerciseDate");
+      let expiration_date = get_value_footnotes(env, &holdings_node, "expirationDate");
       let underlying_security = parse_underlying_security(env, &holdings_node).ok()?;
       let post_transaction_amounts = parse_post_transaction_amounts(env, &holdings_node).ok()?;
       let ownership_nature = parse_ownership_nature(env, &holdings_node).ok()?;
@@ -497,6 +512,7 @@ fn parse_derivative_holdings(env: Env, node: &Node) -> Result<Vec<DerivativeHold
       })
     })
     .collect();
+
   Ok(holdings)
 }
 
@@ -508,13 +524,13 @@ fn parse_transaction_coding(node: &Node) -> Result<Option<TransactionCoding>, St
       let form_type = parse_string::<String>(&coding_node, "transactionFormType");
       let transaction_code = parse_string::<String>(&coding_node, "transactionCode");
       let equity_swap_involved = parse_string::<bool>(&coding_node, "equitySwapInvolved");
-      let footnote_id = parse_string::<String>(&coding_node, "footnoteId");
+      let footnote_ids = parse_footnote_ids(&coding_node);
 
       Ok(TransactionCoding {
         form_type,
         transaction_code,
         equity_swap_involved,
-        footnote_id,
+        footnote_ids,
       })
     })
     .transpose()
@@ -526,11 +542,11 @@ fn parse_holding_coding(node: &Node) -> Result<Option<HoldingCoding>, String> {
     .find(|node| node.has_tag_name("transactionCoding"))
     .map(|coding_node| {
       let form_type = parse_string::<String>(&coding_node, "transactionFormType");
-      let footnote_id = parse_string::<String>(&coding_node, "footnoteId");
+      let footnote_ids = parse_footnote_ids(&coding_node);
 
       Ok(HoldingCoding {
         form_type,
-        footnote_id,
+        footnote_ids,
       })
     })
     .transpose()
@@ -541,10 +557,10 @@ fn parse_transaction_amounts(env: Env, node: &Node) -> Result<Option<Transaction
     .children()
     .find(|node| node.has_tag_name("transactionAmounts"))
     .map(|amounts_node| {
-      let shares = get_value_footnote(env, &amounts_node, "transactionShares");
-      let price_per_share = get_value_footnote(env, &amounts_node, "transactionPricePerShare");
+      let shares = get_value_footnotes(env, &amounts_node, "transactionShares");
+      let price_per_share = get_value_footnotes(env, &amounts_node, "transactionPricePerShare");
       let acquired_disposed_code =
-        get_value_footnote(env, &amounts_node, "transactionAcquiredDisposedCode");
+        get_value_footnotes(env, &amounts_node, "transactionAcquiredDisposedCode");
 
       Ok(TransactionAmounts {
         shares,
@@ -563,11 +579,11 @@ fn parse_derivative_transaction_amounts(
     .children()
     .find(|node| node.has_tag_name("transactionAmounts"))
     .map(|amounts_node| {
-      let shares = get_value_footnote(env, &amounts_node, "transactionShares");
-      let price_per_share = get_value_footnote(env, &amounts_node, "transactionPricePerShare");
-      let total_value = get_value_footnote(env, &amounts_node, "transactionTotalValue");
+      let shares = get_value_footnotes(env, &amounts_node, "transactionShares");
+      let price_per_share = get_value_footnotes(env, &amounts_node, "transactionPricePerShare");
+      let total_value = get_value_footnotes(env, &amounts_node, "transactionTotalValue");
       let acquired_disposed_code =
-        get_value_footnote(env, &amounts_node, "transactionAcquiredDisposedCode");
+        get_value_footnotes(env, &amounts_node, "transactionAcquiredDisposedCode");
 
       Ok(DerivativeTransactionAmounts {
         shares,
@@ -584,9 +600,9 @@ fn parse_underlying_security(env: Env, node: &Node) -> Result<Option<UnderlyingS
     .children()
     .find(|node| node.has_tag_name("underlyingSecurity"))
     .map(|security_node| {
-      let title = get_value_footnote(env, &security_node, "underlyingSecurityTitle");
-      let shares = get_value_footnote(env, &security_node, "underlyingSecurityShares");
-      let value = get_value_footnote(env, &security_node, "underlyingSecurityValue");
+      let title = get_value_footnotes(env, &security_node, "underlyingSecurityTitle");
+      let shares = get_value_footnotes(env, &security_node, "underlyingSecurityShares");
+      let value = get_value_footnotes(env, &security_node, "underlyingSecurityValue");
 
       Ok(UnderlyingSecurity {
         title,
@@ -606,9 +622,9 @@ fn parse_post_transaction_amounts(
     .find(|node| node.has_tag_name("postTransactionAmounts"))
     .map(|amounts_node| {
       let shares_owned_following_transaction =
-        get_value_footnote(env, &amounts_node, "sharesOwnedFollowingTransaction");
+        get_value_footnotes(env, &amounts_node, "sharesOwnedFollowingTransaction");
       let value_owned_following_transaction =
-        get_value_footnote(env, &amounts_node, "valueOwnedFollowingTransaction");
+        get_value_footnotes(env, &amounts_node, "valueOwnedFollowingTransaction");
 
       Ok(PostTransactionAmounts {
         shares_owned_following_transaction,
@@ -624,8 +640,8 @@ fn parse_ownership_nature(env: Env, node: &Node) -> Result<Option<OwnershipNatur
     .find(|node| node.has_tag_name("ownershipNature"))
     .map(|nature_node| {
       let direct_or_indirect_ownership =
-        get_value_footnote(env, &nature_node, "directOrIndirectOwnership");
-      let nature_of_ownership = get_value_footnote(env, &nature_node, "natureOfOwnership");
+        get_value_footnotes(env, &nature_node, "directOrIndirectOwnership");
+      let nature_of_ownership = get_value_footnotes(env, &nature_node, "natureOfOwnership");
 
       Ok(OwnershipNature {
         direct_or_indirect_ownership,
@@ -648,25 +664,36 @@ fn parse_footnotes(node: &Node) -> Result<Vec<Footnote>, String> {
       Some(Footnote { id, note })
     })
     .collect();
+
   Ok(footnotes)
 }
 
-fn parse_owner_signature(node: &Node) -> Result<OwnerSignature, String> {
+fn parse_owner_signatures(node: &Node) -> Result<Vec<OwnerSignature>, String> {
   node
     .children()
-    .find(|node| node.has_tag_name("ownerSignature"))
-    .ok_or("ownerSignature not found".to_string())
-    .and_then(|signature_node| {
+    .filter(|node| node.has_tag_name("ownerSignature"))
+    .map(|signature_node| {
       let name = parse_string::<String>(&signature_node, "signatureName")
-        .ok_or("signatureName not found".to_string())?;
+        .ok_or_else(|| "signatureName not found".to_string())?;
       let date = parse_string::<String>(&signature_node, "signatureDate")
-        .ok_or("signatureDate not found".to_string())?;
-
+        .ok_or_else(|| "signatureDate not found".to_string())?;
       Ok(OwnerSignature { name, date })
     })
+    .collect()
 }
 
-fn get_value_footnote(env: Env, node: &Node, tag: &str) -> Option<ValueFootnote> {
+fn parse_footnote_ids(node: &Node) -> Option<Vec<String>> {
+  let footnote_ids: Vec<String> = node
+    .children()
+    .filter(|child_node| child_node.has_tag_name("footnoteId"))
+    .filter_map(|id_node| id_node.attribute("id"))
+    .map(ToString::to_string)
+    .collect();
+
+  Some(footnote_ids)
+}
+
+fn get_value_footnotes(env: Env, node: &Node, tag: &str) -> Option<ValueFootnotes> {
   node
     .children()
     .find(|node| node.has_tag_name(tag))
@@ -674,17 +701,18 @@ fn get_value_footnote(env: Env, node: &Node, tag: &str) -> Option<ValueFootnote>
       let value = tag_node
         .children()
         .find(|child_node| child_node.has_tag_name("value"))
-        .and_then(|value_node| value_node.text())
-        .map(|s| parse_value(env, s))
+        .map(|value_node| {
+          let text = value_node.text().unwrap_or_else(|| "");
+          parse_value(env, &text)
+        })
         .transpose()
         .unwrap_or(None);
 
-      let footnote_id = tag_node
-        .children()
-        .find(|child_node| child_node.has_tag_name("footnoteId"))
-        .and_then(|id_node| id_node.attribute("id"))
-        .map(|s| s.to_string());
+      let footnote_ids = parse_footnote_ids(&tag_node);
 
-      ValueFootnote { value, footnote_id }
+      ValueFootnotes {
+        value,
+        footnote_ids,
+      }
     })
 }
