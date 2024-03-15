@@ -34,16 +34,21 @@ test('parse 10k from native', async (t) => {
 
   t.is(result.facts.length, 3460)
 
-  const firstFact = result.facts[0]
-  t.is(firstFact.concept, 'DocumentFiscalPeriodFocus')
-  t.is(firstFact.value, 'FY')
+  const fact = result.facts[2000]
+  t.is(
+    fact.concept,
+    'LiabilityForFuturePolicyBenefitExpectedFuturePolicyBenefitCurrentPeriodIncreaseDecreaseEffectOfActualFromExpectedExperience'
+  )
+  t.is(fact.value, 121000000)
 
-  const context = firstFact.context
+  const context = fact.context
   t.is(context.entity, '0001067983')
-  t.deepEqual(context.segments, [])
+  t.deepEqual(context.segments, [
+    { dimension: 'ProductOrServiceAxis', member: 'PeriodicPaymentAnnuitiesMember' },
+  ])
 
   const period = context.period
-  t.is(period.instant, undefined)
+  t.is(period.instant, '2022-12-31')
   t.is(period.start_date, undefined)
   t.is(period.end_date, undefined)
 })
