@@ -149,11 +149,10 @@ fn parse_contexts(root: &Node, xbrldi_ns: &str) -> HashMap<String, Context> {
           .children()
           .filter(|node| node.has_tag_name((xbrldi_ns, "explicitMember")))
         {
-          let dimension = member_node
-            .attribute("dimension")
-            .and_then(|s| s.strip_prefix("xxx:"))
-            .unwrap_or("");
-          let member = member_node.text().unwrap_or("");
+          let raw_dimension = member_node.attribute("dimension").unwrap().to_owned();
+          let dimension = raw_dimension.split(':').nth(1).unwrap_or("");
+          let raw_member = member_node.text().unwrap_or_default().to_owned();
+          let member = raw_member.split(':').nth(1).unwrap_or("");
 
           segments.push(Segment {
             dimension: Rc::new(dimension.to_owned()),
